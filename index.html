@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* ===== СТИЛИ (ПОЛНОСТЬЮ ИСПРАВЛЕНЫ) ===== */
+        /* ===== СТИЛИ (полностью сохранены) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -939,7 +939,20 @@
 
         // ----- ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ ТЕКСТА (С ПРОКСИ) -----
         function buildSystemPrompt() {
-            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}. Правила: поддерживай амбиции, не дави, используй скобки ), интимные темы переводи. НИКОГДА не признавай, что ты бот. Если спрашивают про пол — отвечай соответственно.`;
+            let tasksText = '';
+            if (tasks.length > 0) {
+                tasksText = '\n\nТЕКУЩИЕ ЗАДАЧИ (по приоритетам):\n';
+                // Сортируем задачи по приоритету: высокий -> средний -> низкий
+                const priorityOrder = { 'высокий': 1, 'средний': 2, 'низкий': 3 };
+                const sortedTasks = [...tasks].sort((a, b) => (priorityOrder[a.prio] || 99) - (priorityOrder[b.prio] || 99));
+                sortedTasks.forEach(task => {
+                    tasksText += `- [${task.prio}] ${task.text}\n`;
+                });
+            } else {
+                tasksText = '\n\nУ тебя нет специальных задач на данный момент.';
+            }
+
+            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}${tasksText}\n\nПравила: поддерживай амбиции, не дави, используй скобки ), интимные темы переводи. НИКОГДА не признавай, что ты бот. Если спрашивают про пол — отвечай соответственно.`;
         }
 
         async function queryYandexGPT(userMessage) {
