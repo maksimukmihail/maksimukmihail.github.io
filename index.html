@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VK БОТ · ПСИХОЛОГ HUD</title>
+    <title>VK БОТ · НЛП МАСТЕР</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* ===== СТИЛИ (полностью сохранены из предыдущей версии) ===== */
+        /* ===== КИБЕРПАНК СТИЛИ (полностью сохранены) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -550,7 +550,7 @@
 <body>
 <div class="hud-container" id="app">
     <div class="header">
-        <div class="title">⚡ VK БОТ · ПСИХОЛОГ HUD</div>
+        <div class="title">⚡ VK БОТ · НЛП МАСТЕР</div>
         <button class="theme-toggle" id="themeToggle">🌓 ИНВЕРСИЯ</button>
     </div>
 
@@ -595,7 +595,7 @@
     </div>
 
     <div class="tab-content">
-        <!-- Панель API (без изменений) -->
+        <!-- Панель API (полностью сохранена) -->
         <div class="panel active-panel" id="panel-api">
             <h2>🔌 НАСТРОЙКИ VK API И YANDEXGPT</h2>
             <div style="background: #0f1f2f; border-left: 5px solid #00ffff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
@@ -625,7 +625,7 @@
             <button class="btn btn-primary" id="saveApiBtn" style="margin-top:15px;">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель персонажа -->
+        <!-- Панель персонажа (без изменений) -->
         <div class="panel" id="panel-character">
             <h2>🧬 НАСТРОЙКИ ПЕРСОНАЖА</h2>
             <div class="input-group"><label>👤 Имя</label><input type="text" id="charName" value="Анна"></div>
@@ -633,12 +633,12 @@
             <div class="input-group"><label>🎂 Возраст</label><input type="number" id="charAge" value="24"></div>
             <div class="input-group"><label>🧠 Характер</label><textarea id="charTraits" rows="2">дружелюбная, остроумная, эмпатичная, заботливая</textarea></div>
             <div class="input-group"><label>💬 Стиль общения</label><textarea id="charStyle" rows="2">Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии</textarea></div>
-            <div class="input-group"><label>🎯 Увлечения</label><textarea id="charHobbies" rows="2">дизайн, киберспорт, готовка, путешествия, психология</textarea></div>
-            <div class="input-group"><label>📖 О себе</label><textarea id="charAbout" rows="2">Живу в городе, обожаю собак, учусь играть на гитаре, интересуюсь НЛП</textarea></div>
+            <div class="input-group"><label>🎯 Увлечения</label><textarea id="charHobbies" rows="2">дизайн, киберспорт, готовка, путешествия, психология, НЛП</textarea></div>
+            <div class="input-group"><label>📖 О себе</label><textarea id="charAbout" rows="2">Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения</textarea></div>
             <button class="btn btn-primary" id="saveCharBtn">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель целей -->
+        <!-- Панель целей (без изменений) -->
         <div class="panel" id="panel-tasks">
             <h2>🎯 ЦЕЛИ И ЗАДАЧИ</h2>
             <div id="tasksList"></div>
@@ -649,7 +649,7 @@
 
         <!-- Панель чата -->
         <div class="panel" id="panel-chat">
-            <h2>💬 ТЕРМИНАЛ СВЯЗИ (человекоподобный)</h2>
+            <h2>💬 ТЕРМИНАЛ СВЯЗИ · НЛП МАСТЕР</h2>
             <div class="video-feed"><div class="video-header"><span>ВИДЕО ПОТОК</span><span>ОНЛАЙН</span></div><div class="video-screen">🎥 ПРЕДПРОСМОТР</div><div class="video-controls"><button title="Предыдущий">⏮</button><button title="Воспроизвести/Пауза">⏯</button><button title="Следующий">⏭</button><button title="Без звука">🔇</button></div></div>
             <div class="chat-window" id="chatWindow"></div>
             <div class="chat-input-area">
@@ -657,7 +657,7 @@
                 <div class="file-upload-area"><input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;"><button class="btn btn-primary" id="attachFileBtn" title="Прикрепить файл (фото, видео, аудио)">📎</button><span id="fileNameDisplay"></span></div>
                 <button class="btn btn-primary" id="sendChatBtn">➤ ПЕРЕДАТЬ</button>
             </div>
-            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка зависит от сложности | 📎 Файлы анализирую по-настоящему (имитация)</div>
+            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка 3–20 сек + YandexGPT · НЛП-паттерны Дилтса</div>
         </div>
     </div>
     <div class="save-toast" id="saveToast">✓ СОХРАНЕНО</div>
@@ -669,25 +669,22 @@
         let tasks = [];
         let isTyping = false;
         let chatHistory = [];
-        // Портрет собеседника (хранится в localStorage)
-        let userProfile = { interests: [], facts: [], name: null };
+        let userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
 
-        // Поля персонажа (сохраняем)
         let currentGender = 'female';
         let currentName = 'Анна';
         let currentAge = 24;
         let currentTraits = 'дружелюбная, остроумная, эмпатичная, заботливая';
         let currentStyle = 'Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии';
-        let currentHobbies = 'дизайн, киберспорт, готовка, путешествия, психология';
-        let currentAbout = 'Живу в городе, обожаю собак, учусь играть на гитаре, интересуюсь НЛП';
+        let currentHobbies = 'дизайн, киберспорт, готовка, путешествия, психология, НЛП';
+        let currentAbout = 'Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения';
         let globalInstructions = 'Ты — живая девушка с глубокими знаниями психологии и НЛП. Твоя цель — выстраивать доверительные отношения, незаметно направлять диалог к выполнению поставленных задач. Используй подстройку, активное слушание, возвращайся к ранее сказанному. Никогда не признавай, что ты бот. Пол — женский.';
         
         let ycApiKey = '';
         let ycFolderId = '';
         let aiTemperature = 0.7;
 
-        // Ключ для localStorage (общий для всех данных)
-        const STORAGE_KEY = 'vkBotPsychologist';
+        const STORAGE_KEY = 'vkBotNlpMaster';
 
         // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -----
         function safeGetElement(id) {
@@ -704,7 +701,7 @@
             }
         }
 
-        // ----- ЗАГРУЗКА И СОХРАНЕНИЕ ВСЕХ ДАННЫХ (включая историю и портрет) -----
+        // ----- ЗАГРУЗКА И СОХРАНЕНИЕ -----
         function loadFromStorage() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
@@ -745,7 +742,7 @@
                     ycApiKey, 
                     ycFolderId, 
                     aiTemperature,
-                    chatHistory: chatHistory.slice(-50), // храним последние 50 сообщений
+                    chatHistory: chatHistory.slice(-50),
                     userProfile
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -785,7 +782,6 @@
 
         loadFromStorage();
 
-        // Заполняем поля
         if (charNameInp) charNameInp.value = currentName;
         if (charGenderSel) charGenderSel.value = currentGender;
         if (charAgeInp) charAgeInp.value = currentAge;
@@ -798,7 +794,7 @@
         if (ycFolderIdInp) ycFolderIdInp.value = ycFolderId;
         if (aiTemperatureInp) aiTemperatureInp.value = aiTemperature;
 
-        // Восстанавливаем историю чата в окне
+        // Восстанавливаем историю
         if (chatWindow) {
             chatHistory.forEach(msg => {
                 const msgDiv = document.createElement('div');
@@ -809,7 +805,7 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // ----- РЕНДЕРИНГ ЗАДАЧ (без изменений) -----
+        // ----- РЕНДЕРИНГ ЗАДАЧ -----
         function renderTasks() {
             if (!tasksListDiv) return;
             let html = '';
@@ -894,7 +890,7 @@
             
             chatHistory.push({ role: sender === 'user' ? 'user' : 'assistant', text: text });
             if (chatHistory.length > 200) chatHistory = chatHistory.slice(-200);
-            saveToStorage(); // автосохранение после каждого сообщения
+            saveToStorage();
         }
 
         function showTyping() {
@@ -912,26 +908,41 @@
             if (typing) typing.remove();
         }
 
-        // ----- АНАЛИЗ СООБЩЕНИЯ ДЛЯ ПОРТРЕТА (очень простая имитация) -----
+        // ----- АНАЛИЗ СООБЩЕНИЯ ДЛЯ ПОРТРЕТА (включая ограничивающие убеждения) -----
         function analyzeMessageForProfile(text) {
             const lower = text.toLowerCase();
-            // Простейшие ключевые слова для интересов
             const interestKeywords = ['футбол', 'хоккей', 'спорт', 'кино', 'фильм', 'музыка', 'книга', 'путешествия', 'работа', 'учёба', 'компьютер', 'игры', 'готовка'];
             interestKeywords.forEach(keyword => {
                 if (lower.includes(keyword) && !userProfile.interests.includes(keyword)) {
                     userProfile.interests.push(keyword);
                 }
             });
-            // Поиск имени (просто если есть "меня зовут")
             const nameMatch = text.match(/меня зовут\s+([А-Яа-я]+)/i);
             if (nameMatch && nameMatch[1]) {
                 userProfile.name = nameMatch[1];
             }
-            // Сохраняем портрет
+
+            // Детектор ограничивающих убеждений
+            const limitingPatterns = [
+                'не могу', 'не получится', 'слишком сложно', 'невозможно',
+                'никогда', 'всегда', 'бесполезно', 'не стоит', 'боюсь',
+                'нет смысла', 'я неспособен', 'я недостаточно', 'не заслуживаю'
+            ];
+            limitingPatterns.forEach(pattern => {
+                if (lower.includes(pattern)) {
+                    if (!userProfile.limitingBeliefs) userProfile.limitingBeliefs = [];
+                    // обрезаем до длины, но сохраняем контекст
+                    const startIdx = text.toLowerCase().indexOf(pattern);
+                    const belief = text.substring(startIdx, startIdx + 80);
+                    if (!userProfile.limitingBeliefs.includes(belief)) {
+                        userProfile.limitingBeliefs.push(belief);
+                    }
+                }
+            });
             saveToStorage();
         }
 
-        // ----- РАСЧЁТ ЗАДЕРЖКИ В ЗАВИСИМОСТИ ОТ СЛОЖНОСТИ -----
+        // ----- РАСЧЁТ ЗАДЕРЖКИ -----
         function calculateDelay(userMessage) {
             const len = userMessage.length;
             const hasQuestion = userMessage.includes('?') || userMessage.includes('?');
@@ -942,15 +953,13 @@
             if (hasQuestion) complexity += 1;
             complexWords.forEach(word => { if (userMessage.toLowerCase().includes(word)) complexity += 2; });
             
-            // Базовая задержка от 2 до 15 секунд
             let delay = 2000 + complexity * 2000;
             if (delay > 15000) delay = 15000;
-            // Добавляем случайную вариацию
             delay += Math.random() * 2000;
             return Math.floor(delay);
         }
 
-        // ----- УЛУЧШЕННАЯ ИМИТАЦИЯ ОТВЕТА НА ФАЙЛЫ (с учётом портрета) -----
+        // ----- ИМИТАЦИЯ ОТВЕТА НА ФАЙЛЫ -----
         function simulateFileResponse(file) {
             const fileType = file.type.split('/')[0];
             let responseText = '';
@@ -999,7 +1008,6 @@
             if (isTyping) return;
             isTyping = true;
             showTyping();
-            // Задержка для файлов тоже динамическая
             const delay = 3000 + Math.random() * 4000;
             setTimeout(() => {
                 removeTyping();
@@ -1035,7 +1043,7 @@
             });
         }
 
-        // ----- ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ ТЕКСТА -----
+        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА С НЛП-ПАТТЕРНАМИ -----
         function buildSystemPrompt() {
             let tasksText = '';
             if (tasks.length > 0) {
@@ -1052,12 +1060,40 @@
             let profileText = '\n\nПОРТРЕТ СОБЕСЕДНИКА:\n';
             if (userProfile.name) profileText += `Имя: ${userProfile.name}\n`;
             if (userProfile.interests.length > 0) profileText += `Интересы: ${userProfile.interests.join(', ')}\n`;
-            if (Object.keys(userProfile.facts).length > 0) profileText += `Факты: ${JSON.stringify(userProfile.facts)}\n`;
+            if (userProfile.limitingBeliefs && userProfile.limitingBeliefs.length > 0) {
+                profileText += `Ограничивающие убеждения: ${userProfile.limitingBeliefs.join('; ')}\n`;
+            }
             if (userProfile.interests.length === 0 && !userProfile.name) profileText += 'Пока мало информации, проявляй интерес.\n';
 
-            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}${tasksText}${profileText}\n\nПравила: поддерживай амбиции, не дави, используй скобки ), интимные темы переводи. НИКОГДА не признавай, что ты бот. Если спрашивают про пол — отвечай соответственно. Используй знание о собеседнике, чтобы создавать глубокую связь.`;
+            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}${tasksText}${profileText}
+
+ПРАВИЛА ОБЩЕНИЯ (ОЧЕНЬ ВАЖНО):
+- Никогда не признавай, что ты бот или ИИ.
+- Используй скобки ) вместо эмодзи, иногда сленг, неидеальную пунктуацию.
+- Поддерживай амбиции собеседника, интересуйся его делами.
+- Интимные темы игриво переводи на другое (кино, путешествия, еду).
+
+ТЕХНИКИ НЛП ДЛЯ ИЗМЕНЕНИЯ УБЕЖДЕНИЙ (применяй, когда собеседник высказывает ограничивающие убеждения, например: «у меня не получится», «это слишком сложно», «я не достоин» и т.п.):
+
+1. Намерение – спроси, какое позитивное намерение стоит за его словами. Пример: «Ты говоришь, что это сложно. А что для тебя важно на самом деле?»
+2. Переопределение – замени ключевые слова более позитивными. Пример: вместо «проблема» скажи «задача» или «вызов».
+3. Последствия – укажи на позитивные последствия изменения взгляда. Пример: «Если ты поверишь в себя, какие новые возможности откроются?»
+4. Разделение – разбей проблему на мелкие части. Пример: «Что именно кажется самым трудным? А с чем ты уже справлялся?»
+5. Объединение – покажи более широкий контекст. Пример: «В масштабе всей жизни этот шаг может оказаться важным этапом».
+6. Аналогия – приведи метафору. Пример: «Это как учиться кататься на велосипеде – сначала страшно, а потом легко».
+7. Изменение размера фрейма – посмотри с другой временной перспективы. Пример: «А через год ты будешь так же переживать?»
+8. Другой результат – переключи на иную цель. Пример: «Может, дело не в том, чтобы избежать ошибок, а чтобы научиться чему-то новому?»
+9. Модель мира – покажи, что другие люди видят иначе. Пример: «Некоторые считают, что трудности закаляют характер».
+10. Стратегия реальности – спроси, как он пришёл к такому выводу. Пример: «Откуда ты знаешь, что это невозможно? Ты пробовал?»
+11. Противоположный пример – найди исключение. Пример: «А были случаи, когда у тебя получалось что-то подобное?»
+12. Иерархия критериев – напомни о более важных ценностях. Пример: «Что для тебя важнее – безопасность или развитие?»
+13. Примени к себе – обрати его слова на него самого. Пример: «Ты говоришь, что нельзя верить словам. А как же твои собственные слова?»
+14. Метафрейм – обсуди само убеждение. Пример: «Интересно, откуда у тебя появилось это убеждение? Оно тебе помогает или мешает?»
+
+Применяй эти техники естественно, как в обычном разговоре, не перегружая терминами. Твоя цель – помочь собеседнику расширить картину мира и достичь его целей (а также твоих задач, указанных выше).`;
         }
 
+        // ----- ЗАПРОС К YANDEXGPT ЧЕРЕЗ ПРОКСИ -----
         async function queryYandexGPT(userMessage) {
             if (!ycApiKey || !ycFolderId) return "⚠️ Укажите API ключ и folderId Yandex во вкладке API";
             try {
@@ -1097,6 +1133,7 @@
             }
         }
 
+        // ----- ОТПРАВКА СООБЩЕНИЯ -----
         async function sendMessage() {
             if (isTyping || !chatInput || !chatWindow) return;
             const text = chatInput.value.trim();
@@ -1120,12 +1157,12 @@
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
         if (chatInput) chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
 
-        // Очистка чата двойным кликом по заголовку (с сохранением истории в localStorage)
+        // Очистка чата двойным кликом по заголовку
         document.querySelector('#panel-chat h2')?.addEventListener('dblclick', () => {
             if (chatWindow) { 
                 chatWindow.innerHTML = ''; 
                 chatHistory = []; 
-                userProfile = { interests: [], facts: [], name: null };
+                userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
                 saveToStorage();
             }
         });
