@@ -3,46 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VK БОТ · НЛП МАСТЕР</title>
+    <title>VK БОТ · SCI-FI HUD</title>
+    <!-- Подключаем футуристические шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== КИБЕРПАНК СТИЛИ (полностью сохранены) ===== */
+        /* ===== SCI-FI СТИЛИ ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
         }
         body {
-            background: #0b0e1a;
+            background: #0a0c12;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 16px;
             position: relative;
+            font-family: 'Inter', sans-serif;
         }
+        /* Текстурированный фон с шумом */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                radial-gradient(circle at 20% 30%, rgba(157, 0, 255, 0.1) 0%, transparent 30%);
-            background-size: 40px 40px, 40px 40px, 100% 100%;
+            background: 
+                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, rgba(0, 255, 255, 0.03) 2px, transparent 2px, transparent 8px),
+                radial-gradient(circle at 30% 40%, rgba(157, 0, 255, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 70% 60%, rgba(0, 255, 255, 0.1) 0%, transparent 40%);
             pointer-events: none;
         }
         .hud-container {
             max-width: 1400px;
             width: 100%;
-            background: rgba(8, 12, 24, 0.9);
-            backdrop-filter: blur(8px);
+            background: rgba(10, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
             border: 2px solid #00ffff;
-            box-shadow: 0 0 30px #00ffff88, inset 0 0 15px #00ffff44;
-            border-radius: 16px;
+            box-shadow: 0 0 30px #00ffff88, inset 0 0 20px #00ffff33;
+            border-radius: 24px;
             padding: 24px;
             display: flex;
             flex-direction: column;
@@ -50,19 +51,142 @@
             position: relative;
             z-index: 2;
         }
+        /* Угловые элементы для контейнера */
         .hud-container::before {
             content: "";
             position: absolute;
-            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
             border: 1px solid #9d00ff;
-            border-radius: 12px;
+            border-radius: 16px;
+            opacity: 0.3;
             pointer-events: none;
-            opacity: 0.5;
         }
-        .audio-panel {
+        .hud-container::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 30px; height: 30px;
+            border-top: 3px solid #00ffff;
+            border-left: 3px solid #00ffff;
+            filter: drop-shadow(0 0 10px cyan);
+        }
+        .hud-container .corner-tr {
+            position: absolute;
+            top: 0; right: 0;
+            width: 30px; height: 30px;
+            border-top: 3px solid #00ffff;
+            border-right: 3px solid #00ffff;
+            filter: drop-shadow(0 0 10px cyan);
+        }
+        .hud-container .corner-bl {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 30px; height: 30px;
+            border-bottom: 3px solid #00ffff;
+            border-left: 3px solid #00ffff;
+            filter: drop-shadow(0 0 10px cyan);
+        }
+        .hud-container .corner-br {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 30px; height: 30px;
+            border-bottom: 3px solid #00ffff;
+            border-right: 3px solid #00ffff;
+            filter: drop-shadow(0 0 10px cyan);
+        }
+
+        /* ===== Шапка с аватаром ===== */
+        .header {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        /* Круглая рамка для аватара */
+        .avatar-frame {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px cyan;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0f1e;
+            position: relative;
+        }
+        .avatar-frame::before {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 1px dashed #9d00ff;
+            animation: spin 10s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .avatar-frame img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #9d00ff;
+        }
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #00ffff;
+            text-shadow: 0 0 10px cyan, 0 0 20px blue;
+        }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,20,40,0.7);
+            padding: 5px 15px;
+            border-radius: 30px;
+            border: 1px solid #9d00ff;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff88;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 2px solid #9d00ff;
+            color: #9d00ff;
+            padding: 8px 16px;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px #9d00ff;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .theme-toggle:hover {
+            background: #9d00ff;
+            color: black;
+        }
+
+        /* ===== Аудио-панель со сворачиванием ===== */
+        .audio-panel {
             background: rgba(0, 20, 40, 0.8);
             border: 2px solid #00ffff;
             border-radius: 20px;
@@ -70,6 +194,13 @@
             margin-bottom: 8px;
             box-shadow: inset 0 0 20px #00ffff33, 0 0 30px #00ffff66;
             position: relative;
+            transition: all 0.3s;
+        }
+        .audio-panel.collapsed {
+            padding: 8px 20px;
+        }
+        .audio-panel.collapsed .audio-sections {
+            display: none;
         }
         .audio-panel::after {
             content: "ПАНЕЛЬ УПРАВЛЕНИЯ TRANCEIVER XT200";
@@ -81,6 +212,33 @@
             font-size: 12px;
             font-weight: 700;
             letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .audio-panel .collapse-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .audio-panel .collapse-btn:hover {
+            background: #00ffff;
+            color: black;
+        }
+        .audio-sections {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         .audio-section {
             display: flex;
@@ -99,6 +257,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
         }
         .level-bar {
             display: flex;
@@ -180,29 +339,59 @@
             cursor: pointer;
             box-shadow: 0 0 10px cyan;
         }
-        .switcher {
+        .switcher-group {
             display: flex;
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 30px;
-            overflow: hidden;
-            width: fit-content;
+            gap: 20px;
+            align-items: center;
         }
-        .switcher button {
-            background: transparent;
-            border: none;
-            color: #00ffff;
-            padding: 6px 16px;
-            font-weight: 700;
+        /* Стилизованные переключатели (checkbox) */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
             cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            font-size: 12px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #1a1f2e;
+            border: 1px solid #00ffff;
+            transition: .4s;
+            border-radius: 34px;
         }
-        .switcher button.active {
-            background: #00ffff;
-            color: black;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 2px;
+            background-color: #00ffff;
+            transition: .4s;
+            border-radius: 50%;
         }
+        input:checked + .slider {
+            background-color: #9d00ff;
+            border-color: #9d00ff;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: #00ffff;
+        }
+        .switch-label {
+            color: #00ffff;
+            font-size: 14px;
+        }
+        /* Кнопки */
         .neo-button {
             background: transparent;
             border: 2px solid #9d00ff;
@@ -215,106 +404,14 @@
             text-transform: uppercase;
             font-size: 12px;
             box-shadow: 0 0 15px #9d00ff;
+            font-family: 'Orbitron', sans-serif;
         }
         .neo-button:hover {
             background: #9d00ff;
             color: black;
         }
-        .texture-panel {
-            background: rgba(10, 15, 30, 0.7);
-            border: 2px solid #9d00ff;
-            border-radius: 16px;
-            padding: 16px;
-            position: relative;
-            overflow: hidden;
-        }
-        .texture-panel::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: repeating-linear-gradient(45deg, rgba(157,0,255,0.05) 0px, rgba(157,0,255,0.05) 2px, transparent 2px, transparent 8px);
-            pointer-events: none;
-        }
-        .video-feed {
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 16px;
-            padding: 10px;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .video-header {
-            display: flex;
-            justify-content: space-between;
-            color: #9d00ff;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 2px;
-        }
-        .video-screen {
-            background: #1a1f2e;
-            height: 120px;
-            border-radius: 12px;
-            border: 1px solid #00ffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #00ffff33;
-            font-size: 24px;
-            text-transform: uppercase;
-        }
-        .video-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .video-controls button {
-            background: transparent;
-            border: 2px solid #00ffff;
-            color: #00ffff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            transition: 0.2s;
-        }
-        .video-controls button:hover {
-            background: #00ffff22;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: #00ffff;
-            text-shadow: 0 0 10px cyan, 0 0 20px blue;
-        }
-        .theme-toggle {
-            background: transparent;
-            border: 2px solid #9d00ff;
-            color: #9d00ff;
-            padding: 8px 16px;
-            font-weight: 700;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            box-shadow: 0 0 15px #9d00ff;
-        }
-        .theme-toggle:hover {
-            background: #9d00ff;
-            color: black;
-        }
+
+        /* ===== Табы (уже есть, но добавим стиль) ===== */
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -335,15 +432,15 @@
             border-radius: 40px;
             transition: 0.2s;
             box-shadow: 0 0 10px #00ffff33;
+            font-family: 'Orbitron', sans-serif;
         }
         .tab-button.active {
             background: #00ffff;
             color: #000;
             box-shadow: 0 0 30px #00ffff;
         }
-        .tab-button:hover {
-            background: #00ffff22;
-        }
+
+        /* ===== Контент с угловыми элементами ===== */
         .tab-content {
             background: rgba(0, 10, 20, 0.7);
             border: 2px solid #9d00ff;
@@ -353,6 +450,46 @@
             min-height: 450px;
             position: relative;
         }
+        .tab-content::before {
+            content: "";
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid #00ffff;
+            border-radius: 16px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        /* Угловые элементы для контента */
+        .tab-content .corner-tl {
+            position: absolute;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
+            border-top: 2px solid #00ffff;
+            border-left: 2px solid #00ffff;
+        }
+        .tab-content .corner-tr {
+            position: absolute;
+            top: 0; right: 0;
+            width: 20px; height: 20px;
+            border-top: 2px solid #00ffff;
+            border-right: 2px solid #00ffff;
+        }
+        .tab-content .corner-bl {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid #00ffff;
+            border-left: 2px solid #00ffff;
+        }
+        .tab-content .corner-br {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 20px; height: 20px;
+            border-bottom: 2px solid #00ffff;
+            border-right: 2px solid #00ffff;
+        }
+
+        /* ===== Панели (без изменений) ===== */
         .panel {
             display: none;
             flex-direction: column;
@@ -370,6 +507,7 @@
             padding-left: 15px;
             margin-bottom: 10px;
             text-shadow: 0 0 5px cyan;
+            font-family: 'Orbitron', sans-serif;
         }
         .input-group {
             display: flex;
@@ -410,6 +548,7 @@
             transition: 0.2s;
             font-size: 16px;
             box-shadow: 0 0 15px #9d00ff;
+            font-family: 'Orbitron', sans-serif;
         }
         .btn:hover {
             background: #9d00ff;
@@ -434,6 +573,12 @@
             align-items: center;
             margin-bottom: 8px;
         }
+
+        /* ===== Окно чата с угловыми элементами ===== */
+        .chat-section {
+            position: relative;
+            margin-top: 10px;
+        }
         .chat-window {
             background: #0a0f1e;
             border: 2px solid #00ffff;
@@ -447,11 +592,48 @@
             margin-bottom: 20px;
             box-shadow: inset 0 0 30px #00ffff22;
             transition: border 0.2s;
+            position: relative;
         }
         .chat-window.drag-over {
             border-color: #9d00ff;
             box-shadow: inset 0 0 30px #9d00ff66;
         }
+        /* Угловые элементы для окна чата */
+        .chat-window::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 25px; height: 25px;
+            border-top: 3px solid #9d00ff;
+            border-left: 3px solid #9d00ff;
+            filter: drop-shadow(0 0 10px magenta);
+        }
+        .chat-window::after {
+            content: "";
+            position: absolute;
+            top: 0; right: 0;
+            width: 25px; height: 25px;
+            border-top: 3px solid #9d00ff;
+            border-right: 3px solid #9d00ff;
+            filter: drop-shadow(0 0 10px magenta);
+        }
+        .chat-window .corner-bl {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 25px; height: 25px;
+            border-bottom: 3px solid #9d00ff;
+            border-left: 3px solid #9d00ff;
+            filter: drop-shadow(0 0 10px magenta);
+        }
+        .chat-window .corner-br {
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 25px; height: 25px;
+            border-bottom: 3px solid #9d00ff;
+            border-right: 3px solid #9d00ff;
+            filter: drop-shadow(0 0 10px magenta);
+        }
+
         .message {
             max-width: 70%;
             padding: 12px 18px;
@@ -461,6 +643,12 @@
             border: 1px solid #00ffff55;
             align-self: flex-start;
             word-wrap: break-word;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .message.user {
             background: #2a1a3a;
@@ -492,6 +680,27 @@
             0%, 100% { opacity: 0.2; }
             50% { opacity: 1; }
         }
+        /* Индикатор загрузки (прогресс-бар) */
+        .loading-bar {
+            width: 100%;
+            height: 3px;
+            background: #1a1f2e;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .loading-bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00ffff, #9d00ff);
+            animation: load 3s linear infinite;
+        }
+        @keyframes load {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
         .chat-input-area {
             display: flex;
             gap: 10px;
@@ -505,6 +714,7 @@
             border-radius: 40px;
             padding: 14px 20px;
             color: white;
+            font-size: 16px;
         }
         .file-upload-area {
             display: flex;
@@ -519,6 +729,56 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        /* Выпадающее меню */
+        .overflow-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .menu-button {
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .menu-button:hover {
+            background: #00ffff22;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 10px;
+            min-width: 150px;
+            z-index: 10;
+            box-shadow: 0 0 20px cyan;
+        }
+        .menu-content a {
+            color: #00ffff;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #00ffff33;
+            font-size: 14px;
+        }
+        .menu-content a:hover {
+            background: #00ffff22;
+        }
+        .overflow-menu:hover .menu-content {
+            display: block;
+        }
+
         .save-toast {
             position: fixed;
             bottom: 30px;
@@ -549,40 +809,72 @@
 </head>
 <body>
 <div class="hud-container" id="app">
+    <!-- Угловые элементы контейнера -->
+    <div class="corner-tr"></div>
+    <div class="corner-bl"></div>
+    <div class="corner-br"></div>
+
     <div class="header">
-        <div class="title">⚡ VK БОТ · НЛП МАСТЕР</div>
-        <button class="theme-toggle" id="themeToggle">🌓 ИНВЕРСИЯ</button>
+        <div class="title-area">
+            <div class="avatar-frame">
+                <!-- Здесь можно вставить ссылку на аватар -->
+                <img src="https://via.placeholder.com/50/0a0f1e/00ffff?text=AI" alt="avatar">
+            </div>
+            <span class="title">⚡ VK БОТ · SCI-FI HUD</span>
+        </div>
+        <div style="display: flex; gap:15px; align-items:center;">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span style="color:#00ffff;">ONLINE</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle">🌓 ИНВЕРСИЯ</button>
+        </div>
     </div>
 
-    <!-- Аудио-панель -->
-    <div class="audio-panel">
-        <div class="audio-section">
-            <div class="section-title">АКУСТИЧЕСКИЕ ДАННЫЕ</div>
-            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:65%"></div></span><span class="level-value">65%</span></div>
-            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:82%"></div></span><span class="level-value">82%</span></div>
-            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:41%"></div></span><span class="level-value">41%</span></div>
-        </div>
-        <div class="audio-section">
-            <div class="section-title">НАСТРОЙКИ ЗВУКА</div>
-            <div class="slider-group"><div class="slider-label"><span>LF</span><span>-2.0</span></div><input type="range" min="-5" max="5" value="-2" step="0.5"></div>
-            <div class="slider-group"><div class="slider-label"><span>MF</span><span>+1.5</span></div><input type="range" min="-5" max="5" value="1.5" step="0.5"></div>
-            <div class="slider-group"><div class="slider-label"><span>HF</span><span>+3.0</span></div><input type="range" min="-5" max="5" value="3" step="0.5"></div>
-        </div>
-        <div class="audio-section">
-            <div class="section-title">ИНДИКАТОР УСТРОЙСТВА</div>
-            <div class="circle-meter"></div>
-            <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#00ffff;">АТАКА</span><span style="color:#9d00ff;">МОНИТОР</span></div>
-        </div>
-        <div class="audio-section">
-            <div class="section-title">УПРАВЛЕНИЕ</div>
-            <div class="switcher"><button class="active">ТИХО</button><button>БЫСТРО</button></div>
-            <div class="switcher" style="margin-top:5px;"><button class="active">АТАКА</button><button>МОНИТОР</button></div>
-            <button class="neo-button" style="margin-top:10px;">СБРОС ПЛЕЕРА</button>
-        </div>
-        <div class="audio-section">
-            <div class="section-title">БАЛАНС</div>
-            <div style="display: flex; gap:5px; align-items:center;"><span style="color:#00ffff;">-1.5</span><input type="range" min="-1.5" max="1.5" value="0" step="0.5" style="width:100px;"><span style="color:#00ffff;">+1.5</span></div>
-            <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#9d00ff;">ПРОФ. РЕЖИМ</span><span style="color:#00ffff;">ВКЛ</span></div>
+    <!-- Аудио-панель со сворачиванием -->
+    <div class="audio-panel" id="audioPanel">
+        <div class="collapse-btn" id="collapseAudioBtn">−</div>
+        <div class="audio-sections">
+            <div class="audio-section">
+                <div class="section-title">АКУСТИЧЕСКИЕ ДАННЫЕ</div>
+                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:65%"></div></span><span class="level-value">65%</span></div>
+                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:82%"></div></span><span class="level-value">82%</span></div>
+                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:41%"></div></span><span class="level-value">41%</span></div>
+            </div>
+            <div class="audio-section">
+                <div class="section-title">НАСТРОЙКИ ЗВУКА</div>
+                <div class="slider-group"><div class="slider-label"><span>LF</span><span>-2.0</span></div><input type="range" min="-5" max="5" value="-2" step="0.5"></div>
+                <div class="slider-group"><div class="slider-label"><span>MF</span><span>+1.5</span></div><input type="range" min="-5" max="5" value="1.5" step="0.5"></div>
+                <div class="slider-group"><div class="slider-label"><span>HF</span><span>+3.0</span></div><input type="range" min="-5" max="5" value="3" step="0.5"></div>
+            </div>
+            <div class="audio-section">
+                <div class="section-title">ИНДИКАТОР УСТРОЙСТВА</div>
+                <div class="circle-meter"></div>
+                <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#00ffff;">АТАКА</span><span style="color:#9d00ff;">МОНИТОР</span></div>
+            </div>
+            <div class="audio-section">
+                <div class="section-title">УПРАВЛЕНИЕ</div>
+                <div class="switcher-group">
+                    <label class="switch">
+                        <input type="checkbox" id="switch1" checked>
+                        <span class="slider"></span>
+                    </label>
+                    <span class="switch-label">АВТО</span>
+                </div>
+                <div class="switcher-group">
+                    <label class="switch">
+                        <input type="checkbox" id="switch2">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="switch-label">ЭКО</span>
+                </div>
+                <button class="neo-button" style="margin-top:10px;">СБРОС ПЛЕЕРА</button>
+            </div>
+            <div class="audio-section">
+                <div class="section-title">БАЛАНС</div>
+                <div style="display: flex; gap:5px; align-items:center;"><span style="color:#00ffff;">-1.5</span><input type="range" min="-1.5" max="1.5" value="0" step="0.5" style="width:100px;"><span style="color:#00ffff;">+1.5</span></div>
+                <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#9d00ff;">ПРОФ. РЕЖИМ</span><span style="color:#00ffff;">ВКЛ</span></div>
+            </div>
         </div>
     </div>
 
@@ -595,7 +887,13 @@
     </div>
 
     <div class="tab-content">
-        <!-- Панель API (полностью сохранена) -->
+        <!-- Угловые элементы для контента -->
+        <div class="corner-tl"></div>
+        <div class="corner-tr"></div>
+        <div class="corner-bl"></div>
+        <div class="corner-br"></div>
+
+        <!-- Панель API -->
         <div class="panel active-panel" id="panel-api">
             <h2>🔌 НАСТРОЙКИ VK API И YANDEXGPT</h2>
             <div style="background: #0f1f2f; border-left: 5px solid #00ffff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
@@ -608,6 +906,23 @@
                     <ol style="padding-left:20px;"><li>Перейдите в <a class="instruction-link" href="https://console.cloud.yandex.ru" target="_blank">консоль Yandex Cloud</a> и авторизуйтесь.</li><li>Выберите или создайте каталог (folder). Его ID можно скопировать из URL (после <code>/folders/</code>) или из карточки каталога. <a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Как узнать ID каталога</a>.</li><li>Создайте сервисный аккаунт с ролью <code>ai.languageModels.user</code>: <ul><li>В меню слева выберите «Сервисные аккаунты» (<a class="instruction-link" href="https://console.cloud.yandex.ru/iam/service-accounts" target="_blank">прямая ссылка</a>).</li><li>Нажмите «Создать сервисный аккаунт», укажите имя (например, <code>vk-bot-sa</code>).</li><li>После создания перейдите в него, нажмите «Добавить роль», найдите <code>ai.languageModels.user</code> и добавьте.</li></ul></li><li>Создайте API-ключ для этого сервисного аккаунта: <ul><li>На странице сервисного аккаунта перейдите на вкладку «API-ключи» или сразу после создания будет предложено создать ключ.</li><li>Нажмите «Создать API-ключ», введите описание, скопируйте сгенерированный ключ (показывается один раз). <a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Документация</a>.</li></ul></li><li>Вставьте скопированный ключ в поле «🔑 API ключ Yandex Cloud» выше, а ID каталога — в поле «📁 ID каталога».</li></ol>
                     <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
                     <ul><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Создание API-ключа</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Получение ID каталога</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/sa/create" target="_blank">Создание сервисного аккаунта</a></li></ul>
+                </div>
+                <!-- Пример переключателей в панели API -->
+                <div style="margin-top:15px; display:flex; gap:30px;">
+                    <div>
+                        <label class="switch">
+                            <input type="checkbox" id="proxySwitch" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-label">Использовать прокси</span>
+                    </div>
+                    <div>
+                        <label class="switch">
+                            <input type="checkbox" id="logSwitch">
+                            <span class="slider"></span>
+                        </label>
+                        <span class="switch-label">Логировать запросы</span>
+                    </div>
                 </div>
             </div>
             <h3 style="color:#9d00ff; margin-top: 10px;">📱 НАСТРОЙКИ VK</h3>
@@ -647,11 +962,24 @@
             <button class="btn btn-primary" id="saveTasksBtn">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель чата -->
+        <!-- Панель чата с выпадающим меню и индикатором загрузки -->
         <div class="panel" id="panel-chat">
             <h2>💬 ТЕРМИНАЛ СВЯЗИ · НЛП МАСТЕР</h2>
             <div class="video-feed"><div class="video-header"><span>ВИДЕО ПОТОК</span><span>ОНЛАЙН</span></div><div class="video-screen">🎥 ПРЕДПРОСМОТР</div><div class="video-controls"><button title="Предыдущий">⏮</button><button title="Воспроизвести/Пауза">⏯</button><button title="Следующий">⏭</button><button title="Без звука">🔇</button></div></div>
-            <div class="chat-window" id="chatWindow"></div>
+            <div class="chat-section">
+                <!-- Выпадающее меню в правом верхнем углу окна чата -->
+                <div class="overflow-menu" style="position:absolute; right:10px; top:10px; z-index:5;">
+                    <button class="menu-button">⋮</button>
+                    <div class="menu-content">
+                        <a href="#" id="clearChat">Очистить историю</a>
+                        <a href="#" id="exportChat">Экспорт диалога</a>
+                    </div>
+                </div>
+                <div class="chat-window" id="chatWindow"></div>
+                <div class="loading-bar" id="loadingBar" style="display: none;">
+                    <div class="fill"></div>
+                </div>
+            </div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" placeholder="Твоё сообщение..." autocomplete="off">
                 <div class="file-upload-area"><input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;"><button class="btn btn-primary" id="attachFileBtn" title="Прикрепить файл (фото, видео, аудио)">📎</button><span id="fileNameDisplay"></span></div>
@@ -779,6 +1107,11 @@
         const fileInput = safeGetElement('fileInput');
         const attachFileBtn = safeGetElement('attachFileBtn');
         const fileNameDisplay = safeGetElement('fileNameDisplay');
+        const loadingBar = safeGetElement('loadingBar');
+        const clearChatBtn = document.getElementById('clearChat');
+        const exportChatBtn = document.getElementById('exportChat');
+        const collapseAudioBtn = document.getElementById('collapseAudioBtn');
+        const audioPanel = document.getElementById('audioPanel');
 
         loadFromStorage();
 
@@ -901,14 +1234,17 @@
             typingDiv.innerHTML = '<span></span><span></span><span></span>';
             chatWindow.appendChild(typingDiv);
             chatWindow.scrollTop = chatWindow.scrollHeight;
+            // Показываем прогресс-бар
+            if (loadingBar) loadingBar.style.display = 'block';
         }
 
         function removeTyping() {
             const typing = document.getElementById('typingIndicator');
             if (typing) typing.remove();
+            if (loadingBar) loadingBar.style.display = 'none';
         }
 
-        // ----- АНАЛИЗ СООБЩЕНИЯ ДЛЯ ПОРТРЕТА (включая ограничивающие убеждения) -----
+        // ----- АНАЛИЗ СООБЩЕНИЯ ДЛЯ ПОРТРЕТА -----
         function analyzeMessageForProfile(text) {
             const lower = text.toLowerCase();
             const interestKeywords = ['футбол', 'хоккей', 'спорт', 'кино', 'фильм', 'музыка', 'книга', 'путешествия', 'работа', 'учёба', 'компьютер', 'игры', 'готовка'];
@@ -922,7 +1258,6 @@
                 userProfile.name = nameMatch[1];
             }
 
-            // Детектор ограничивающих убеждений
             const limitingPatterns = [
                 'не могу', 'не получится', 'слишком сложно', 'невозможно',
                 'никогда', 'всегда', 'бесполезно', 'не стоит', 'боюсь',
@@ -931,7 +1266,6 @@
             limitingPatterns.forEach(pattern => {
                 if (lower.includes(pattern)) {
                     if (!userProfile.limitingBeliefs) userProfile.limitingBeliefs = [];
-                    // обрезаем до длины, но сохраняем контекст
                     const startIdx = text.toLowerCase().indexOf(pattern);
                     const belief = text.substring(startIdx, startIdx + 80);
                     if (!userProfile.limitingBeliefs.includes(belief)) {
@@ -1043,7 +1377,7 @@
             });
         }
 
-        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА С НЛП-ПАТТЕРНАМИ -----
+        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА -----
         function buildSystemPrompt() {
             let tasksText = '';
             if (tasks.length > 0) {
@@ -1157,15 +1491,34 @@
         if (sendBtn) sendBtn.addEventListener('click', sendMessage);
         if (chatInput) chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
 
-        // Очистка чата двойным кликом по заголовку
-        document.querySelector('#panel-chat h2')?.addEventListener('dblclick', () => {
-            if (chatWindow) { 
-                chatWindow.innerHTML = ''; 
-                chatHistory = []; 
-                userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
-                saveToStorage();
-            }
-        });
+        // Очистка чата
+        if (clearChatBtn) {
+            clearChatBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (chatWindow) { 
+                    chatWindow.innerHTML = ''; 
+                    chatHistory = []; 
+                    userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
+                    saveToStorage();
+                }
+            });
+        }
+
+        // Экспорт диалога (заглушка)
+        if (exportChatBtn) {
+            exportChatBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert('Экспорт диалога пока в разработке');
+            });
+        }
+
+        // Сворачивание аудио-панели
+        if (collapseAudioBtn && audioPanel) {
+            collapseAudioBtn.addEventListener('click', () => {
+                audioPanel.classList.toggle('collapsed');
+                collapseAudioBtn.textContent = audioPanel.classList.contains('collapsed') ? '+' : '−';
+            });
+        }
 
         renderTasks();
     })();
