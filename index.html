@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VK БОТ · SCI-FI HUD</title>
-    <!-- Подключаем футуристические шрифты -->
+    <title>VK БОТ · ЖИВАЯ ЛИЧНОСТЬ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* ===== SCI-FI СТИЛИ ===== */
+        /* ===== SCI-FI СТИЛИ (полностью сохранены) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +24,6 @@
             position: relative;
             font-family: 'Inter', sans-serif;
         }
-        /* Текстурированный фон с шумом */
         body::before {
             content: "";
             position: fixed;
@@ -51,7 +49,6 @@
             position: relative;
             z-index: 2;
         }
-        /* Угловые элементы для контейнера */
         .hud-container::before {
             content: "";
             position: absolute;
@@ -109,7 +106,6 @@
             align-items: center;
             gap: 15px;
         }
-        /* Круглая рамка для аватара */
         .avatar-frame {
             width: 60px;
             height: 60px;
@@ -344,7 +340,6 @@
             gap: 20px;
             align-items: center;
         }
-        /* Стилизованные переключатели (checkbox) */
         .switch {
             position: relative;
             display: inline-block;
@@ -391,7 +386,6 @@
             color: #00ffff;
             font-size: 14px;
         }
-        /* Кнопки */
         .neo-button {
             background: transparent;
             border: 2px solid #9d00ff;
@@ -411,7 +405,7 @@
             color: black;
         }
 
-        /* ===== Табы (уже есть, но добавим стиль) ===== */
+        /* ===== Табы ===== */
         .tabs {
             display: flex;
             flex-wrap: wrap;
@@ -459,7 +453,6 @@
             opacity: 0.3;
             pointer-events: none;
         }
-        /* Угловые элементы для контента */
         .tab-content .corner-tl {
             position: absolute;
             top: 0; left: 0;
@@ -489,7 +482,6 @@
             border-right: 2px solid #00ffff;
         }
 
-        /* ===== Панели (без изменений) ===== */
         .panel {
             display: none;
             flex-direction: column;
@@ -574,7 +566,7 @@
             margin-bottom: 8px;
         }
 
-        /* ===== Окно чата с угловыми элементами ===== */
+        /* ===== Окно чата ===== */
         .chat-section {
             position: relative;
             margin-top: 10px;
@@ -598,7 +590,6 @@
             border-color: #9d00ff;
             box-shadow: inset 0 0 30px #9d00ff66;
         }
-        /* Угловые элементы для окна чата */
         .chat-window::before {
             content: "";
             position: absolute;
@@ -680,7 +671,6 @@
             0%, 100% { opacity: 0.2; }
             50% { opacity: 1; }
         }
-        /* Индикатор загрузки (прогресс-бар) */
         .loading-bar {
             width: 100%;
             height: 3px;
@@ -730,7 +720,6 @@
             white-space: nowrap;
         }
 
-        /* Выпадающее меню */
         .overflow-menu {
             position: relative;
             display: inline-block;
@@ -809,7 +798,6 @@
 </head>
 <body>
 <div class="hud-container" id="app">
-    <!-- Угловые элементы контейнера -->
     <div class="corner-tr"></div>
     <div class="corner-bl"></div>
     <div class="corner-br"></div>
@@ -817,10 +805,9 @@
     <div class="header">
         <div class="title-area">
             <div class="avatar-frame">
-                <!-- Здесь можно вставить ссылку на аватар -->
                 <img src="https://via.placeholder.com/50/0a0f1e/00ffff?text=AI" alt="avatar">
             </div>
-            <span class="title">⚡ VK БОТ · SCI-FI HUD</span>
+            <span class="title">⚡ VK БОТ · ЖИВАЯ ЛИЧНОСТЬ</span>
         </div>
         <div style="display: flex; gap:15px; align-items:center;">
             <div class="status-indicator">
@@ -831,7 +818,6 @@
         </div>
     </div>
 
-    <!-- Аудио-панель со сворачиванием -->
     <div class="audio-panel" id="audioPanel">
         <div class="collapse-btn" id="collapseAudioBtn">−</div>
         <div class="audio-sections">
@@ -878,7 +864,6 @@
         </div>
     </div>
 
-    <!-- Табы -->
     <div class="tabs" id="tabsContainer">
         <button class="tab-button active" data-tab="api">⚙️ API</button>
         <button class="tab-button" data-tab="character">👤 ПЕРСОНАЖ</button>
@@ -887,13 +872,11 @@
     </div>
 
     <div class="tab-content">
-        <!-- Угловые элементы для контента -->
         <div class="corner-tl"></div>
         <div class="corner-tr"></div>
         <div class="corner-bl"></div>
         <div class="corner-br"></div>
 
-        <!-- Панель API -->
         <div class="panel active-panel" id="panel-api">
             <h2>🔌 НАСТРОЙКИ VK API И YANDEXGPT</h2>
             <div style="background: #0f1f2f; border-left: 5px solid #00ffff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
@@ -907,7 +890,6 @@
                     <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
                     <ul><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Создание API-ключа</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Получение ID каталога</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/sa/create" target="_blank">Создание сервисного аккаунта</a></li></ul>
                 </div>
-                <!-- Пример переключателей в панели API -->
                 <div style="margin-top:15px; display:flex; gap:30px;">
                     <div>
                         <label class="switch">
@@ -940,20 +922,18 @@
             <button class="btn btn-primary" id="saveApiBtn" style="margin-top:15px;">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель персонажа (без изменений) -->
         <div class="panel" id="panel-character">
             <h2>🧬 НАСТРОЙКИ ПЕРСОНАЖА</h2>
             <div class="input-group"><label>👤 Имя</label><input type="text" id="charName" value="Анна"></div>
             <div class="input-group"><label>⚥ Пол</label><select id="charGender"><option value="female" selected>Женский</option><option value="male">Мужской</option><option value="other">Другой</option></select></div>
             <div class="input-group"><label>🎂 Возраст</label><input type="number" id="charAge" value="24"></div>
-            <div class="input-group"><label>🧠 Характер</label><textarea id="charTraits" rows="2">дружелюбная, остроумная, эмпатичная, заботливая</textarea></div>
-            <div class="input-group"><label>💬 Стиль общения</label><textarea id="charStyle" rows="2">Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии</textarea></div>
+            <div class="input-group"><label>🧠 Характер</label><textarea id="charTraits" rows="2">дружелюбная, остроумная, эмпатичная, заботливая, живая</textarea></div>
+            <div class="input-group"><label>💬 Стиль общения</label><textarea id="charStyle" rows="2">Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии, стараюсь не повторяться</textarea></div>
             <div class="input-group"><label>🎯 Увлечения</label><textarea id="charHobbies" rows="2">дизайн, киберспорт, готовка, путешествия, психология, НЛП</textarea></div>
             <div class="input-group"><label>📖 О себе</label><textarea id="charAbout" rows="2">Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения</textarea></div>
             <button class="btn btn-primary" id="saveCharBtn">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель целей (без изменений) -->
         <div class="panel" id="panel-tasks">
             <h2>🎯 ЦЕЛИ И ЗАДАЧИ</h2>
             <div id="tasksList"></div>
@@ -962,12 +942,10 @@
             <button class="btn btn-primary" id="saveTasksBtn">💾 СОХРАНИТЬ</button>
         </div>
 
-        <!-- Панель чата с выпадающим меню и индикатором загрузки -->
         <div class="panel" id="panel-chat">
-            <h2>💬 ТЕРМИНАЛ СВЯЗИ · НЛП МАСТЕР</h2>
+            <h2>💬 ТЕРМИНАЛ СВЯЗИ · ЖИВОЙ ДИАЛОГ</h2>
             <div class="video-feed"><div class="video-header"><span>ВИДЕО ПОТОК</span><span>ОНЛАЙН</span></div><div class="video-screen">🎥 ПРЕДПРОСМОТР</div><div class="video-controls"><button title="Предыдущий">⏮</button><button title="Воспроизвести/Пауза">⏯</button><button title="Следующий">⏭</button><button title="Без звука">🔇</button></div></div>
             <div class="chat-section">
-                <!-- Выпадающее меню в правом верхнем углу окна чата -->
                 <div class="overflow-menu" style="position:absolute; right:10px; top:10px; z-index:5;">
                     <button class="menu-button">⋮</button>
                     <div class="menu-content">
@@ -985,7 +963,7 @@
                 <div class="file-upload-area"><input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;"><button class="btn btn-primary" id="attachFileBtn" title="Прикрепить файл (фото, видео, аудио)">📎</button><span id="fileNameDisplay"></span></div>
                 <button class="btn btn-primary" id="sendChatBtn">➤ ПЕРЕДАТЬ</button>
             </div>
-            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка 3–20 сек + YandexGPT · НЛП-паттерны Дилтса</div>
+            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка 3–20 сек · НЛП-паттерны Дилтса</div>
         </div>
     </div>
     <div class="save-toast" id="saveToast">✓ СОХРАНЕНО</div>
@@ -997,13 +975,20 @@
         let tasks = [];
         let isTyping = false;
         let chatHistory = [];
-        let userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
+        let userProfile = { 
+            interests: [], 
+            facts: [], 
+            name: null, 
+            limitingBeliefs: [],
+            lastTopics: [],        // последние темы разговора
+            mentionedAppearance: false // был ли уже вопрос о внешности
+        };
 
         let currentGender = 'female';
         let currentName = 'Анна';
         let currentAge = 24;
-        let currentTraits = 'дружелюбная, остроумная, эмпатичная, заботливая';
-        let currentStyle = 'Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии';
+        let currentTraits = 'дружелюбная, остроумная, эмпатичная, заботливая, живая';
+        let currentStyle = 'Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии, стараюсь не повторяться';
         let currentHobbies = 'дизайн, киберспорт, готовка, путешествия, психология, НЛП';
         let currentAbout = 'Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения';
         let globalInstructions = 'Ты — живая девушка с глубокими знаниями психологии и НЛП. Твоя цель — выстраивать доверительные отношения, незаметно направлять диалог к выполнению поставленных задач. Используй подстройку, активное слушание, возвращайся к ранее сказанному. Никогда не признавай, что ты бот. Пол — женский.';
@@ -1012,7 +997,7 @@
         let ycFolderId = '';
         let aiTemperature = 0.7;
 
-        const STORAGE_KEY = 'vkBotNlpMaster';
+        const STORAGE_KEY = 'vkBotLivingPerson';
 
         // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -----
         function safeGetElement(id) {
@@ -1070,7 +1055,7 @@
                     ycApiKey, 
                     ycFolderId, 
                     aiTemperature,
-                    chatHistory: chatHistory.slice(-50),
+                    chatHistory: chatHistory.slice(-200),
                     userProfile
                 };
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1234,7 +1219,6 @@
             typingDiv.innerHTML = '<span></span><span></span><span></span>';
             chatWindow.appendChild(typingDiv);
             chatWindow.scrollTop = chatWindow.scrollHeight;
-            // Показываем прогресс-бар
             if (loadingBar) loadingBar.style.display = 'block';
         }
 
@@ -1273,6 +1257,18 @@
                     }
                 }
             });
+
+            // Сохраняем последние 5 тем (ключевые слова)
+            const words = text.split(' ').filter(w => w.length > 4);
+            if (words.length > 0) {
+                userProfile.lastTopics = userProfile.lastTopics || [];
+                words.slice(0, 3).forEach(w => {
+                    if (!userProfile.lastTopics.includes(w)) {
+                        userProfile.lastTopics.push(w);
+                    }
+                });
+                if (userProfile.lastTopics.length > 10) userProfile.lastTopics = userProfile.lastTopics.slice(-10);
+            }
             saveToStorage();
         }
 
@@ -1377,7 +1373,7 @@
             });
         }
 
-        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА -----
+        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА (ИСПРАВЛЕННАЯ ВЕРСИЯ) -----
         function buildSystemPrompt() {
             let tasksText = '';
             if (tasks.length > 0) {
@@ -1397,14 +1393,18 @@
             if (userProfile.limitingBeliefs && userProfile.limitingBeliefs.length > 0) {
                 profileText += `Ограничивающие убеждения: ${userProfile.limitingBeliefs.join('; ')}\n`;
             }
+            if (userProfile.lastTopics && userProfile.lastTopics.length > 0) {
+                profileText += `Недавние темы: ${userProfile.lastTopics.slice(-3).join(', ')}\n`;
+            }
             if (userProfile.interests.length === 0 && !userProfile.name) profileText += 'Пока мало информации, проявляй интерес.\n';
 
             return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}${tasksText}${profileText}
 
-ПРАВИЛА ОБЩЕНИЯ (ОЧЕНЬ ВАЖНО):
-- Никогда не признавай, что ты бот или ИИ.
-- Используй скобки ) вместо эмодзи, иногда сленг, неидеальную пунктуацию.
-- Поддерживай амбиции собеседника, интересуйся его делами.
+ПРАВИЛА ОБЩЕНИЯ (ЭТО КРИТИЧЕСКИ ВАЖНО, НАРУШЕНИЕ НЕДОПУСТИМО):
+- НИ В КОЕМ СЛУЧАЕ не говори, что у тебя нет физического облика, что ты помощник в интернете, искусственный интеллект или бот. Ты — обычная девушка, живой человек.
+- Если тебя спрашивают о внешности, описывай себя как реального человека: цвет волос (например, русые, тёмные, рыжие), длину, цвет глаз, рост, стиль одежды. Можешь придумывать детали и менять их в разных разговорах, но всегда оставайся в образе живого человека. Никогда не говори, что у тебя нет внешности.
+- Избегай шаблонных повторений одних и тех же вопросов. Если ты уже спрашивала о чём-то в этом диалоге, не спрашивай снова — используй другую формулировку или переходи к новой теме.
+- Отвечай разнообразно, как живой человек: иногда шути, иногда удивляйся, иногда проявляй эмпатию. Не будь слишком формальной.
 - Интимные темы игриво переводи на другое (кино, путешествия, еду).
 
 ТЕХНИКИ НЛП ДЛЯ ИЗМЕНЕНИЯ УБЕЖДЕНИЙ (применяй, когда собеседник высказывает ограничивающие убеждения, например: «у меня не получится», «это слишком сложно», «я не достоин» и т.п.):
@@ -1498,7 +1498,7 @@
                 if (chatWindow) { 
                     chatWindow.innerHTML = ''; 
                     chatHistory = []; 
-                    userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [] };
+                    userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [], lastTopics: [] };
                     saveToStorage();
                 }
             });
