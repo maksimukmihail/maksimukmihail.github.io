@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VK БОТ · ЖИВАЯ ЛИЧНОСТЬ</title>
+    <title>VK BOT · SCI-FI INTERFACE</title>
+    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Three.js для 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        /* ===== SCI-FI СТИЛИ (полностью сохранены) ===== */
+        /* ===== БАЗОВЫЕ СБРОСЫ И ШУМ ===== */
         * {
             margin: 0;
             padding: 0;
@@ -17,1511 +20,602 @@
         body {
             background: #0a0c12;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            position: relative;
             font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
         }
+        /* Фоновый шум и цифровые артефакты */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: 
-                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.03) 0px, rgba(0, 255, 255, 0.03) 2px, transparent 2px, transparent 8px),
-                radial-gradient(circle at 30% 40%, rgba(157, 0, 255, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 70% 60%, rgba(0, 255, 255, 0.1) 0%, transparent 40%);
+                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.02) 0px, rgba(0, 255, 255, 0.02) 2px, transparent 2px, transparent 8px),
+                radial-gradient(circle at 20% 30%, rgba(255, 100, 0, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(0, 255, 200, 0.1) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* Бегущая строка ASCII-кода */
+        .ascii-runner {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 100%;
+            color: rgba(0, 255, 255, 0.2);
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            z-index: 0;
             pointer-events: none;
         }
-        .hud-container {
-            max-width: 1400px;
-            width: 100%;
-            background: rgba(10, 15, 25, 0.85);
+        .ascii-runner span {
+            display: inline-block;
+            animation: scrollAscii 30s linear infinite;
+        }
+        @keyframes scrollAscii {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
+        .hud {
+            position: relative;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: 900px;
+            z-index: 10;
+        }
+
+        /* ===== ПАНЕЛИ ===== */
+        .panel {
+            position: absolute;
+            background: rgba(10, 20, 30, 0.75);
             backdrop-filter: blur(12px);
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 30px #00ffff88, inset 0 0 20px #00ffff33;
-            border-radius: 24px;
-            padding: 24px;
+            border: 1px solid;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(0,255,255,0.3), inset 0 0 20px rgba(0,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+        .panel:hover {
+            box-shadow: 0 20px 50px rgba(0,255,255,0.5), 0 0 40px cyan;
+            transform: translateY(-5px) scale(1.02);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Заголовок панели с меню */
+        .panel-header {
             display: flex;
-            flex-direction: column;
-            gap: 24px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(0,255,255,0.4);
+            background: rgba(0,20,40,0.5);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #0ff;
+            text-shadow: 0 0 5px cyan;
+        }
+        .panel-header .menu {
+            display: flex;
+            gap: 20px;
+        }
+        .panel-header .menu span {
+            cursor: default;
+            transition: 0.2s;
+            position: relative;
+        }
+        .panel-header .menu span:hover {
+            color: #ffaa00;
+            text-shadow: 0 0 10px orange;
+        }
+        .panel-header .menu span::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #ffaa00;
+            transition: 0.3s;
+        }
+        .panel-header .menu span:hover::after {
+            width: 100%;
+        }
+        .panel-header .win-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .panel-header .win-controls button {
+            background: transparent;
+            border: 1px solid cyan;
+            color: cyan;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .panel-header .win-controls button:hover {
+            background: cyan;
+            color: black;
+            box-shadow: 0 0 15px cyan;
+        }
+
+        /* Контент панели */
+        .panel-content {
+            padding: 20px;
+            color: #ccc;
             position: relative;
             z-index: 2;
         }
-        .hud-container::before {
-            content: "";
-            position: absolute;
-            top: 10px; left: 10px; right: 10px; bottom: 10px;
-            border: 1px solid #9d00ff;
-            border-radius: 16px;
-            opacity: 0.3;
-            pointer-events: none;
-        }
-        .hud-container::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 30px; height: 30px;
-            border-top: 3px solid #00ffff;
-            border-left: 3px solid #00ffff;
-            filter: drop-shadow(0 0 10px cyan);
-        }
-        .hud-container .corner-tr {
-            position: absolute;
-            top: 0; right: 0;
-            width: 30px; height: 30px;
-            border-top: 3px solid #00ffff;
-            border-right: 3px solid #00ffff;
-            filter: drop-shadow(0 0 10px cyan);
-        }
-        .hud-container .corner-bl {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 30px; height: 30px;
-            border-bottom: 3px solid #00ffff;
-            border-left: 3px solid #00ffff;
-            filter: drop-shadow(0 0 10px cyan);
-        }
-        .hud-container .corner-br {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 30px; height: 30px;
-            border-bottom: 3px solid #00ffff;
-            border-right: 3px solid #00ffff;
-            filter: drop-shadow(0 0 10px cyan);
-        }
 
-        /* ===== Шапка с аватаром ===== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 8px;
-            position: relative;
-        }
-        .title-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .avatar-frame {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
+        /* Стили для инпутов и кнопок */
+        .sci-fi-input {
+            background: rgba(0, 20, 40, 0.7);
             border: 2px solid #00ffff;
-            box-shadow: 0 0 20px cyan;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #0a0f1e;
-            position: relative;
-        }
-        .avatar-frame::before {
-            content: "";
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 1px dashed #9d00ff;
-            animation: spin 10s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .avatar-frame img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #9d00ff;
-        }
-        .title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: #00ffff;
-            text-shadow: 0 0 10px cyan, 0 0 20px blue;
-        }
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0,20,40,0.7);
-            padding: 5px 15px;
-            border-radius: 30px;
-            border: 1px solid #9d00ff;
-        }
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            background: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00ff88;
-        }
-        .theme-toggle {
-            background: transparent;
-            border: 2px solid #9d00ff;
-            color: #9d00ff;
-            padding: 8px 16px;
-            font-weight: 700;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            box-shadow: 0 0 15px #9d00ff;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .theme-toggle:hover {
-            background: #9d00ff;
-            color: black;
-        }
-
-        /* ===== Аудио-панель со сворачиванием ===== */
-        .audio-panel {
-            background: rgba(0, 20, 40, 0.8);
-            border: 2px solid #00ffff;
-            border-radius: 20px;
-            padding: 16px 20px;
-            margin-bottom: 8px;
-            box-shadow: inset 0 0 20px #00ffff33, 0 0 30px #00ffff66;
-            position: relative;
-            transition: all 0.3s;
-        }
-        .audio-panel.collapsed {
-            padding: 8px 20px;
-        }
-        .audio-panel.collapsed .audio-sections {
-            display: none;
-        }
-        .audio-panel::after {
-            content: "ПАНЕЛЬ УПРАВЛЕНИЯ TRANCEIVER XT200";
-            position: absolute;
-            top: -12px; left: 20px;
-            background: #0b0e1a;
-            padding: 0 10px;
-            color: #9d00ff;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .audio-panel .collapse-btn {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            background: transparent;
-            border: 2px solid #00ffff;
-            color: #00ffff;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .audio-panel .collapse-btn:hover {
-            background: #00ffff;
-            color: black;
-        }
-        .audio-sections {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .audio-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 140px;
-            border-right: 1px solid #00ffff55;
-            padding-right: 15px;
-        }
-        .audio-section:last-child {
-            border-right: none;
-        }
-        .section-title {
-            color: #9d00ff;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .level-bar {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .bar-container {
-            flex: 1;
-            height: 8px;
-            background: #1a1f2e;
-            border-radius: 10px;
-            border: 1px solid #00ffff;
-            overflow: hidden;
-        }
-        .bar-fill {
-            height: 100%;
-            width: 75%;
-            background: linear-gradient(90deg, #00ffff, #9d00ff);
-            border-radius: 10px;
-        }
-        .level-value {
-            color: #00ffff;
-            font-size: 14px;
-            font-weight: 600;
-            min-width: 40px;
-            text-align: right;
-        }
-        .circle-meter {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: conic-gradient(#00ffff 0deg 220deg, #1a1f2e 220deg 360deg);
-            border: 2px solid #9d00ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 5px 0;
-            position: relative;
-        }
-        .circle-meter::after {
-            content: "48%";
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
-            background: #0b0e1a;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #00ffff;
-        }
-        .slider-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .slider-label {
-            display: flex;
-            justify-content: space-between;
-            color: #ccc;
-            font-size: 12px;
-        }
-        input[type=range] {
-            width: 100%;
-            height: 4px;
-            background: #1a1f2e;
-            border-radius: 10px;
-            -webkit-appearance: none;
-            border: 1px solid #00ffff;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #00ffff;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px cyan;
-        }
-        .switcher-group {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #1a1f2e;
-            border: 1px solid #00ffff;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 2px;
-            background-color: #00ffff;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: #9d00ff;
-            border-color: #9d00ff;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-            background-color: #00ffff;
-        }
-        .switch-label {
-            color: #00ffff;
-            font-size: 14px;
-        }
-        .neo-button {
-            background: transparent;
-            border: 2px solid #9d00ff;
-            color: #9d00ff;
-            padding: 8px 16px;
-            font-weight: 700;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-            font-size: 12px;
-            box-shadow: 0 0 15px #9d00ff;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .neo-button:hover {
-            background: #9d00ff;
-            color: black;
-        }
-
-        /* ===== Табы ===== */
-        .tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            border-bottom: 1px solid #00ffff55;
-            padding-bottom: 10px;
-        }
-        .tab-button {
-            background: transparent;
-            border: 2px solid #00ffff;
-            color: #00ffff;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 40px;
-            transition: 0.2s;
-            box-shadow: 0 0 10px #00ffff33;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .tab-button.active {
-            background: #00ffff;
-            color: #000;
-            box-shadow: 0 0 30px #00ffff;
-        }
-
-        /* ===== Контент с угловыми элементами ===== */
-        .tab-content {
-            background: rgba(0, 10, 20, 0.7);
-            border: 2px solid #9d00ff;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: inset 0 0 20px #9d00ff33, 0 0 30px #9d00ff66;
-            min-height: 450px;
-            position: relative;
-        }
-        .tab-content::before {
-            content: "";
-            position: absolute;
-            top: 5px; left: 5px; right: 5px; bottom: 5px;
-            border: 1px solid #00ffff;
-            border-radius: 16px;
-            opacity: 0.3;
-            pointer-events: none;
-        }
-        .tab-content .corner-tl {
-            position: absolute;
-            top: 0; left: 0;
-            width: 20px; height: 20px;
-            border-top: 2px solid #00ffff;
-            border-left: 2px solid #00ffff;
-        }
-        .tab-content .corner-tr {
-            position: absolute;
-            top: 0; right: 0;
-            width: 20px; height: 20px;
-            border-top: 2px solid #00ffff;
-            border-right: 2px solid #00ffff;
-        }
-        .tab-content .corner-bl {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 20px; height: 20px;
-            border-bottom: 2px solid #00ffff;
-            border-left: 2px solid #00ffff;
-        }
-        .tab-content .corner-br {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 20px; height: 20px;
-            border-bottom: 2px solid #00ffff;
-            border-right: 2px solid #00ffff;
-        }
-
-        .panel {
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .panel.active-panel {
-            display: flex;
-        }
-        .panel h2 {
-            color: #00ffff;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            font-size: 22px;
-            border-left: 5px solid #9d00ff;
-            padding-left: 15px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 5px cyan;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .input-group label {
-            color: #9d00ff;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        .input-group input, .input-group textarea, .input-group select {
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 12px 16px;
             color: #0ff;
             font-size: 16px;
             outline: none;
+            width: 100%;
             transition: 0.2s;
+            font-family: 'Inter', monospace;
         }
-        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
-            box-shadow: 0 0 20px #00ffff, inset 0 0 10px #00ffff33;
-            border-color: #9d00ff;
+        .sci-fi-input:focus {
+            box-shadow: 0 0 20px cyan, inset 0 0 10px cyan;
+            border-color: #ffaa00;
         }
-        .btn {
+        .sci-fi-button {
             background: transparent;
             border: 2px solid #9d00ff;
             color: #9d00ff;
-            padding: 14px 28px;
+            padding: 12px 24px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
-            border-radius: 50px;
+            border-radius: 30px;
             cursor: pointer;
             transition: 0.2s;
-            font-size: 16px;
+            font-size: 14px;
             box-shadow: 0 0 15px #9d00ff;
             font-family: 'Orbitron', sans-serif;
         }
-        .btn:hover {
+        .sci-fi-button:hover {
             background: #9d00ff;
             color: black;
+            box-shadow: 0 0 30px #9d00ff;
         }
-        .btn-primary {
+        .sci-fi-button.primary {
             border-color: #00ffff;
             color: #00ffff;
-            box-shadow: 0 0 15px #00ffff;
+            box-shadow: 0 0 15px cyan;
         }
-        .btn-primary:hover {
+        .sci-fi-button.primary:hover {
             background: #00ffff;
             color: black;
         }
-        .task-item {
-            background: #0a0f1e;
-            border: 1px solid #00ffff55;
-            border-radius: 16px;
-            padding: 12px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 8px;
+
+        /* Анимированные графики (Canvas) */
+        .graph-canvas {
+            width: 100%;
+            height: 120px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 10px 0;
         }
 
-        /* ===== Окно чата ===== */
-        .chat-section {
-            position: relative;
+        /* Индикаторы */
+        .status-bar {
+            display: flex;
+            gap: 15px;
             margin-top: 10px;
         }
-        .chat-window {
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 20px;
-            height: 350px;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 0 30px #00ffff22;
-            transition: border 0.2s;
-            position: relative;
+        .status-item {
+            flex: 1;
+            background: rgba(0,255,255,0.1);
+            border: 1px solid cyan;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
         }
-        .chat-window.drag-over {
-            border-color: #9d00ff;
-            box-shadow: inset 0 0 30px #9d00ff66;
+        .status-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffaa00;
+            text-shadow: 0 0 10px orange;
         }
-        .chat-window::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0;
-            width: 25px; height: 25px;
-            border-top: 3px solid #9d00ff;
-            border-left: 3px solid #9d00ff;
-            filter: drop-shadow(0 0 10px magenta);
+        .progress-bar {
+            height: 8px;
+            background: #1a1f2e;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 5px 0;
         }
-        .chat-window::after {
-            content: "";
-            position: absolute;
-            top: 0; right: 0;
-            width: 25px; height: 25px;
-            border-top: 3px solid #9d00ff;
-            border-right: 3px solid #9d00ff;
-            filter: drop-shadow(0 0 10px magenta);
+        .progress-fill {
+            height: 100%;
+            width: 65%;
+            background: linear-gradient(90deg, cyan, #9d00ff);
+            border-radius: 4px;
+            animation: pulseWidth 2s infinite alternate;
         }
-        .chat-window .corner-bl {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 25px; height: 25px;
-            border-bottom: 3px solid #9d00ff;
-            border-left: 3px solid #9d00ff;
-            filter: drop-shadow(0 0 10px magenta);
-        }
-        .chat-window .corner-br {
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 25px; height: 25px;
-            border-bottom: 3px solid #9d00ff;
-            border-right: 3px solid #9d00ff;
-            filter: drop-shadow(0 0 10px magenta);
+        @keyframes pulseWidth {
+            0% { width: 65%; opacity: 0.8; }
+            100% { width: 85%; opacity: 1; }
         }
 
-        .message {
-            max-width: 70%;
-            padding: 12px 18px;
-            border-radius: 18px;
-            background: #1a1f2e;
-            color: #ccc;
-            border: 1px solid #00ffff55;
-            align-self: flex-start;
-            word-wrap: break-word;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
+        /* 3D-контейнер */
+        #canvas-3d {
+            width: 100%;
+            height: 250px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid cyan;
+            box-shadow: inset 0 0 30px rgba(0,255,255,0.3);
+            margin-bottom: 15px;
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* Сетки и линии */
+        .grid-overlay {
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.2) 1px, transparent 1px);
+            background-size: 30px 30px;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 1;
         }
-        .message.user {
-            background: #2a1a3a;
-            border-color: #9d00ff;
-            align-self: flex-end;
-        }
-        .message.file {
-            background: #1a2a3a;
-            border-color: #ffaa00;
-            font-style: italic;
-        }
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 12px 18px;
-            background: #0f1a2a;
-            border-radius: 18px;
-            width: fit-content;
-            border: 1px solid #00ffff;
-        }
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: #00ffff;
-            border-radius: 50%;
-            animation: blink 1.4s infinite;
+
+        /* Цифровое мигание */
+        .blink-number {
+            animation: blink 1.5s step-end infinite;
         }
         @keyframes blink {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-        .loading-bar {
-            width: 100%;
-            height: 3px;
-            background: #1a1f2e;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-        .loading-bar .fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #00ffff, #9d00ff);
-            animation: load 3s linear infinite;
-        }
-        @keyframes load {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
-        .chat-input-area {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .chat-input-area input {
-            flex: 1;
-            min-width: 200px;
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 40px;
-            padding: 14px 20px;
-            color: white;
-            font-size: 16px;
-        }
-        .file-upload-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        #fileNameDisplay {
-            color: #00ffff;
-            font-size: 14px;
-            max-width: 150px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .overflow-menu {
-            position: relative;
-            display: inline-block;
-        }
-        .menu-button {
-            background: transparent;
-            border: 2px solid #00ffff;
-            color: #00ffff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .menu-button:hover {
-            background: #00ffff22;
-        }
-        .menu-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 50px;
-            background: #0a0f1e;
-            border: 2px solid #00ffff;
-            border-radius: 10px;
-            min-width: 150px;
-            z-index: 10;
-            box-shadow: 0 0 20px cyan;
-        }
-        .menu-content a {
-            color: #00ffff;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            border-bottom: 1px solid #00ffff33;
-            font-size: 14px;
-        }
-        .menu-content a:hover {
-            background: #00ffff22;
-        }
-        .overflow-menu:hover .menu-content {
-            display: block;
-        }
-
-        .save-toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #00ffff;
-            color: black;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 700;
-            box-shadow: 0 0 30px cyan;
-            opacity: 0;
-            transition: 0.3s;
-            pointer-events: none;
-        }
-        .save-toast.show {
-            opacity: 1;
-        }
-        .instruction-link {
-            color: #00ffff;
-            text-decoration: none;
-            border-bottom: 1px dashed #00ffff;
-        }
-        .instruction-link:hover {
-            color: #9d00ff;
-            border-bottom-color: #9d00ff;
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .panel { position: relative; width: 100% !important; margin-bottom: 20px; }
+            .hud { min-height: auto; }
         }
     </style>
 </head>
 <body>
-<div class="hud-container" id="app">
-    <div class="corner-tr"></div>
-    <div class="corner-bl"></div>
-    <div class="corner-br"></div>
+    <div class="ascii-runner"><span>01001110 01001100 01010000 00100000 01010011 01011001 01010011 01010100 01000101 01001101 00100000 01001111 01001110 01001100 01001001 01001110 01000101 00100000 00101110 00101110 00101110 </span></div>
 
-    <div class="header">
-        <div class="title-area">
-            <div class="avatar-frame">
-                <img src="https://via.placeholder.com/50/0a0f1e/00ffff?text=AI" alt="avatar">
-            </div>
-            <span class="title">⚡ VK БОТ · ЖИВАЯ ЛИЧНОСТЬ</span>
-        </div>
-        <div style="display: flex; gap:15px; align-items:center;">
-            <div class="status-indicator">
-                <span class="status-dot"></span>
-                <span style="color:#00ffff;">ONLINE</span>
-            </div>
-            <button class="theme-toggle" id="themeToggle">🌓 ИНВЕРСИЯ</button>
-        </div>
-    </div>
-
-    <div class="audio-panel" id="audioPanel">
-        <div class="collapse-btn" id="collapseAudioBtn">−</div>
-        <div class="audio-sections">
-            <div class="audio-section">
-                <div class="section-title">АКУСТИЧЕСКИЕ ДАННЫЕ</div>
-                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:65%"></div></span><span class="level-value">65%</span></div>
-                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:82%"></div></span><span class="level-value">82%</span></div>
-                <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:41%"></div></span><span class="level-value">41%</span></div>
-            </div>
-            <div class="audio-section">
-                <div class="section-title">НАСТРОЙКИ ЗВУКА</div>
-                <div class="slider-group"><div class="slider-label"><span>LF</span><span>-2.0</span></div><input type="range" min="-5" max="5" value="-2" step="0.5"></div>
-                <div class="slider-group"><div class="slider-label"><span>MF</span><span>+1.5</span></div><input type="range" min="-5" max="5" value="1.5" step="0.5"></div>
-                <div class="slider-group"><div class="slider-label"><span>HF</span><span>+3.0</span></div><input type="range" min="-5" max="5" value="3" step="0.5"></div>
-            </div>
-            <div class="audio-section">
-                <div class="section-title">ИНДИКАТОР УСТРОЙСТВА</div>
-                <div class="circle-meter"></div>
-                <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#00ffff;">АТАКА</span><span style="color:#9d00ff;">МОНИТОР</span></div>
-            </div>
-            <div class="audio-section">
-                <div class="section-title">УПРАВЛЕНИЕ</div>
-                <div class="switcher-group">
-                    <label class="switch">
-                        <input type="checkbox" id="switch1" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span class="switch-label">АВТО</span>
+    <div class="hud">
+        <!-- Панель PROJECT (левая верхняя) -->
+        <div class="panel" style="width: 380px; left: 20px; top: 20px; border-color: cyan; z-index: 20;">
+            <div class="panel-header">
+                <div class="menu">
+                    <span>FILE</span>
+                    <span>EDIT</span>
+                    <span>COMP</span>
                 </div>
-                <div class="switcher-group">
-                    <label class="switch">
-                        <input type="checkbox" id="switch2">
-                        <span class="slider"></span>
-                    </label>
-                    <span class="switch-label">ЭКО</span>
+                <div class="win-controls">
+                    <button>−</button>
+                    <button>□</button>
+                    <button>✕</button>
                 </div>
-                <button class="neo-button" style="margin-top:10px;">СБРОС ПЛЕЕРА</button>
             </div>
-            <div class="audio-section">
-                <div class="section-title">БАЛАНС</div>
-                <div style="display: flex; gap:5px; align-items:center;"><span style="color:#00ffff;">-1.5</span><input type="range" min="-1.5" max="1.5" value="0" step="0.5" style="width:100px;"><span style="color:#00ffff;">+1.5</span></div>
-                <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#9d00ff;">ПРОФ. РЕЖИМ</span><span style="color:#00ffff;">ВКЛ</span></div>
+            <div class="panel-content">
+                <h3 style="color:#0ff; margin-bottom:15px; font-family:Orbitron;">PROJECT: VK BOT</h3>
+                <div class="status-bar">
+                    <div class="status-item"><span class="status-value">84%</span> <div>SYNC</div></div>
+                    <div class="status-item"><span class="status-value">02</span> <div>ACTIVE</div></div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:75%"></div></div>
+                <div style="margin-top:20px;">
+                    <canvas class="graph-canvas" id="graph1"></canvas>
+                </div>
+                <div style="color:#0ff; font-size:12px; margin-top:10px;">> SYSTEM READY_</div>
             </div>
         </div>
-    </div>
 
-    <div class="tabs" id="tabsContainer">
-        <button class="tab-button active" data-tab="api">⚙️ API</button>
-        <button class="tab-button" data-tab="character">👤 ПЕРСОНАЖ</button>
-        <button class="tab-button" data-tab="tasks">🎯 ЦЕЛИ</button>
-        <button class="tab-button" data-tab="chat">💬 ЧАТ</button>
-    </div>
-
-    <div class="tab-content">
-        <div class="corner-tl"></div>
-        <div class="corner-tr"></div>
-        <div class="corner-bl"></div>
-        <div class="corner-br"></div>
-
-        <div class="panel active-panel" id="panel-api">
-            <h2>🔌 НАСТРОЙКИ VK API И YANDEXGPT</h2>
-            <div style="background: #0f1f2f; border-left: 5px solid #00ffff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
-                <h3 style="color:#00ffff; margin-bottom:10px;">🤖 НАСТРОЙКИ YANDEXGPT</h3>
-                <div class="input-group" style="margin-bottom: 10px;"><label>🔑 API ключ Yandex Cloud</label><input type="password" id="ycApiKey" placeholder="AQVNxxxxxxxxxxxxxxxxxxxxxxxxxx"></div>
-                <div class="input-group" style="margin-bottom: 10px;"><label>📁 ID каталога (folderId)</label><input type="text" id="ycFolderId" placeholder="b1gxxxxxxxxxxxxxxxxxxx"></div>
-                <div class="input-group" style="margin-bottom: 5px;"><label>🌡️ Температура (0.0 - 1.0)</label><input type="number" id="aiTemperature" min="0" max="1" step="0.1" value="0.7"></div>
-                <div style="background: #0a0f1e; padding: 15px; border-radius: 8px; margin-top: 15px; color: #ccc; font-size: 14px; line-height: 1.6;">
-                    <p style="color:#9d00ff; font-weight:700; margin-bottom:8px;">📘 ПОДРОБНАЯ ИНСТРУКЦИЯ: ПОЛУЧЕНИЕ API-КЛЮЧА И ID КАТАЛОГА YANDEX CLOUD</p>
-                    <ol style="padding-left:20px;"><li>Перейдите в <a class="instruction-link" href="https://console.cloud.yandex.ru" target="_blank">консоль Yandex Cloud</a> и авторизуйтесь.</li><li>Выберите или создайте каталог (folder). Его ID можно скопировать из URL (после <code>/folders/</code>) или из карточки каталога. <a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Как узнать ID каталога</a>.</li><li>Создайте сервисный аккаунт с ролью <code>ai.languageModels.user</code>: <ul><li>В меню слева выберите «Сервисные аккаунты» (<a class="instruction-link" href="https://console.cloud.yandex.ru/iam/service-accounts" target="_blank">прямая ссылка</a>).</li><li>Нажмите «Создать сервисный аккаунт», укажите имя (например, <code>vk-bot-sa</code>).</li><li>После создания перейдите в него, нажмите «Добавить роль», найдите <code>ai.languageModels.user</code> и добавьте.</li></ul></li><li>Создайте API-ключ для этого сервисного аккаунта: <ul><li>На странице сервисного аккаунта перейдите на вкладку «API-ключи» или сразу после создания будет предложено создать ключ.</li><li>Нажмите «Создать API-ключ», введите описание, скопируйте сгенерированный ключ (показывается один раз). <a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Документация</a>.</li></ul></li><li>Вставьте скопированный ключ в поле «🔑 API ключ Yandex Cloud» выше, а ID каталога — в поле «📁 ID каталога».</li></ol>
-                    <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
-                    <ul><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Создание API-ключа</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Получение ID каталога</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/sa/create" target="_blank">Создание сервисного аккаунта</a></li></ul>
+        <!-- Панель WIN (правая верхняя) -->
+        <div class="panel" style="width: 320px; right: 20px; top: 20px; border-color: #ffaa00; z-index: 21;">
+            <div class="panel-header" style="border-bottom-color:#ffaa00;">
+                <div class="menu">
+                    <span>WIN</span>
+                    <span>EDIT</span>
+                    <span>VIEW</span>
                 </div>
-                <div style="margin-top:15px; display:flex; gap:30px;">
-                    <div>
-                        <label class="switch">
-                            <input type="checkbox" id="proxySwitch" checked>
-                            <span class="slider"></span>
-                        </label>
-                        <span class="switch-label">Использовать прокси</span>
-                    </div>
-                    <div>
-                        <label class="switch">
-                            <input type="checkbox" id="logSwitch">
-                            <span class="slider"></span>
-                        </label>
-                        <span class="switch-label">Логировать запросы</span>
-                    </div>
+                <div class="win-controls">
+                    <button style="border-color:#ffaa00; color:#ffaa00;">−</button>
+                    <button style="border-color:#ffaa00; color:#ffaa00;">□</button>
+                    <button style="border-color:#ffaa00; color:#ffaa00;">✕</button>
                 </div>
             </div>
-            <h3 style="color:#9d00ff; margin-top: 10px;">📱 НАСТРОЙКИ VK</h3>
-            <div class="input-group"><label>🔑 Токен доступа (VK API)</label><input type="password" id="vkToken" placeholder="vk1.a.xxxx..." value="токен_не_задан"></div>
-            <div class="input-group"><label>🆔 ID сообщества</label><input type="text" id="vkGroupId" placeholder="123456789" value="123456"></div>
-            <div class="input-group"><label>🔐 Подтверждающий токен</label><input type="password" id="vkConfirmToken" placeholder="a1b2c3d4e5f6g7h8i9j0" value="confirm_token"></div>
-            <div style="background: #0f1f2f; border-left: 5px solid #9d00ff; padding: 15px; border-radius: 16px; margin-top: 15px;">
-                <h3 style="color:#9d00ff; margin-bottom:10px;">📘 ПОДРОБНАЯ ИНСТРУКЦИЯ: НАСТРОЙКА CALLBACK API ВКОНТАКТЕ</h3>
-                <div style="color:#ccc; line-height:1.6; font-size:14px;">
-                    <ol style="padding-left:20px;"><li>Перейдите в управление сообществом ВК: <ul><li>Откройте своё сообщество → нажмите «Управление» (или перейдите по ссылке <code>https://vk.com/clubXXXX?act=edit</code>, заменив XXXX на ID сообщества).</li></ul></li><li>В левом меню выберите «Работа с API» → «Callback API». Прямая ссылка: <code>https://vk.com/clubXXXX?act=api</code> (замените XXXX на ID).</li><li>Нажмите «Добавить сервер» и заполните поля: <ul><li><b>Название сервера</b>: например, «Мой бот».</li><li><b>Адрес сервера</b>: <code>https://ваш-домен/api/callback</code> (если тестируете локально, используйте ngrok).</li><li><b>Версия API</b>: 5.131 (или новее).</li></ul></li><li>После добавления сервера скопируйте <b>Строку подтверждения</b> (это токен). Вставьте её в поле «🔐 Подтверждающий токен» выше.</li><li>Нажмите «Подтвердить» — ВК отправит запрос на ваш сервер. Если сервер настроен правильно, он ответит этой строкой, и статус станет «Подтверждён».</li><li>В разделе «Типы событий» отметьте необходимые: <ul><li>Обязательно: <b>«Сообщение входящее»</b> и <b>«Подтверждение сервера»</b>.</li><li>Остальные — по желанию.</li></ul></li><li>Сохраните настройки.</li></ol>
-                    <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
-                    <ul><li><a class="instruction-link" href="https://vk.com/dev/callback_api" target="_blank">Документация VK Callback API</a></li><li><a class="instruction-link" href="https://vkhost.github.io/" target="_blank">Генератор токена доступа сообщества (vkhost)</a></li></ul>
+            <div class="panel-content">
+                <h3 style="color:#ffaa00; font-family:Orbitron;">API CONTROL</h3>
+                <div class="sci-fi-input" style="margin:10px 0;" contenteditable="false">🔑 Yandex API Key</div>
+                <input type="password" id="ycApiKey" class="sci-fi-input" placeholder="AQVN..." style="margin:5px 0;">
+                <input type="text" id="ycFolderId" class="sci-fi-input" placeholder="Folder ID" style="margin:5px 0;">
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="sci-fi-button primary" id="saveApiBtn">СОХРАНИТЬ</button>
+                    <button class="sci-fi-button">ТЕСТ</button>
+                </div>
+                <div class="status-bar" style="margin-top:20px;">
+                    <div class="status-item"><span class="status-value">37°</span> <div>TEMP</div></div>
+                    <div class="status-item"><span class="status-value">98%</span> <div>MEM</div></div>
                 </div>
             </div>
-            <button class="btn btn-primary" id="saveApiBtn" style="margin-top:15px;">💾 СОХРАНИТЬ</button>
         </div>
 
-        <div class="panel" id="panel-character">
-            <h2>🧬 НАСТРОЙКИ ПЕРСОНАЖА</h2>
-            <div class="input-group"><label>👤 Имя</label><input type="text" id="charName" value="Анна"></div>
-            <div class="input-group"><label>⚥ Пол</label><select id="charGender"><option value="female" selected>Женский</option><option value="male">Мужской</option><option value="other">Другой</option></select></div>
-            <div class="input-group"><label>🎂 Возраст</label><input type="number" id="charAge" value="24"></div>
-            <div class="input-group"><label>🧠 Характер</label><textarea id="charTraits" rows="2">дружелюбная, остроумная, эмпатичная, заботливая, живая</textarea></div>
-            <div class="input-group"><label>💬 Стиль общения</label><textarea id="charStyle" rows="2">Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии, стараюсь не повторяться</textarea></div>
-            <div class="input-group"><label>🎯 Увлечения</label><textarea id="charHobbies" rows="2">дизайн, киберспорт, готовка, путешествия, психология, НЛП</textarea></div>
-            <div class="input-group"><label>📖 О себе</label><textarea id="charAbout" rows="2">Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения</textarea></div>
-            <button class="btn btn-primary" id="saveCharBtn">💾 СОХРАНИТЬ</button>
-        </div>
-
-        <div class="panel" id="panel-tasks">
-            <h2>🎯 ЦЕЛИ И ЗАДАЧИ</h2>
-            <div id="tasksList"></div>
-            <button class="btn" id="addTaskBtn">+ ДОБАВИТЬ ЗАДАЧУ</button>
-            <div style="margin-top: 25px;"><h3 style="color:#9d00ff;">📋 ОБЩИЕ ИНСТРУКЦИИ</h3><textarea id="globalInstructions" rows="6" style="width:100%; background:#0a0f1e; border:2px solid #00ffff; border-radius:16px; padding:12px; color:white;">Ты — живая девушка с глубокими знаниями психологии и НЛП. Твоя цель — выстраивать доверительные отношения, незаметно направлять диалог к выполнению поставленных задач. Используй подстройку, активное слушание, возвращайся к ранее сказанному. Никогда не признавай, что ты бот. Пол — женский.</textarea></div>
-            <button class="btn btn-primary" id="saveTasksBtn">💾 СОХРАНИТЬ</button>
-        </div>
-
-        <div class="panel" id="panel-chat">
-            <h2>💬 ТЕРМИНАЛ СВЯЗИ · ЖИВОЙ ДИАЛОГ</h2>
-            <div class="video-feed"><div class="video-header"><span>ВИДЕО ПОТОК</span><span>ОНЛАЙН</span></div><div class="video-screen">🎥 ПРЕДПРОСМОТР</div><div class="video-controls"><button title="Предыдущий">⏮</button><button title="Воспроизвести/Пауза">⏯</button><button title="Следующий">⏭</button><button title="Без звука">🔇</button></div></div>
-            <div class="chat-section">
-                <div class="overflow-menu" style="position:absolute; right:10px; top:10px; z-index:5;">
-                    <button class="menu-button">⋮</button>
-                    <div class="menu-content">
-                        <a href="#" id="clearChat">Очистить историю</a>
-                        <a href="#" id="exportChat">Экспорт диалога</a>
-                    </div>
+        <!-- Центральная панель с 3D -->
+        <div class="panel" style="width: 550px; left: 420px; top: 180px; border-color: #9d00ff; z-index: 30;">
+            <div class="panel-header" style="border-bottom-color:#9d00ff;">
+                <div class="menu">
+                    <span>3D</span>
+                    <span>SCAN</span>
+                    <span>HOLO</span>
                 </div>
-                <div class="chat-window" id="chatWindow"></div>
-                <div class="loading-bar" id="loadingBar" style="display: none;">
-                    <div class="fill"></div>
+                <div class="win-controls">
+                    <button style="border-color:#9d00ff; color:#9d00ff;">−</button>
+                    <button style="border-color:#9d00ff; color:#9d00ff;">□</button>
+                    <button style="border-color:#9d00ff; color:#9d00ff;">✕</button>
                 </div>
             </div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Твоё сообщение..." autocomplete="off">
-                <div class="file-upload-area"><input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;"><button class="btn btn-primary" id="attachFileBtn" title="Прикрепить файл (фото, видео, аудио)">📎</button><span id="fileNameDisplay"></span></div>
-                <button class="btn btn-primary" id="sendChatBtn">➤ ПЕРЕДАТЬ</button>
+            <div class="panel-content">
+                <div id="canvas-3d"></div>
+                <div style="display:flex; justify-content:space-between; margin-top:10px;">
+                    <span style="color:#0ff;">NEURAL CORE</span>
+                    <span style="color:#ffaa00;">ACTIVE</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
+                <div style="display:flex; gap:10px; margin-top:15px;">
+                    <button class="sci-fi-button">ВРАЩАТЬ</button>
+                    <button class="sci-fi-button">МАСШТАБ</button>
+                </div>
             </div>
-            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка 3–20 сек · НЛП-паттерны Дилтса</div>
+        </div>
+
+        <!-- Панель PERSONA (левая нижняя) -->
+        <div class="panel" style="width: 380px; left: 20px; bottom: 20px; border-color: cyan; z-index: 25;">
+            <div class="panel-header">
+                <div class="menu">
+                    <span>PERSONA</span>
+                    <span>EDIT</span>
+                    <span>PROFILE</span>
+                </div>
+                <div class="win-controls">
+                    <button>−</button>
+                    <button>□</button>
+                    <button>✕</button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <input type="text" id="charName" class="sci-fi-input" placeholder="Имя" value="Анна">
+                <select id="charGender" class="sci-fi-input" style="margin:10px 0;">
+                    <option value="female">Женский</option>
+                    <option value="male">Мужской</option>
+                </select>
+                <textarea id="charTraits" class="sci-fi-input" rows="2" placeholder="Характер">дружелюбная, эмпатичная</textarea>
+                <textarea id="charAbout" class="sci-fi-input" rows="2" placeholder="О себе" style="margin:10px 0;">Живу в городе, учу НЛП</textarea>
+                <button class="sci-fi-button primary" id="saveCharBtn">СОХРАНИТЬ</button>
+                <div style="margin-top:15px;">
+                    <canvas class="graph-canvas" id="graph2"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Панель CHAT (правая нижняя) -->
+        <div class="panel" style="width: 450px; right: 20px; bottom: 20px; border-color: #00ffff; z-index: 26;">
+            <div class="panel-header">
+                <div class="menu">
+                    <span>CHAT</span>
+                    <span>LOG</span>
+                    <span>CLEAR</span>
+                </div>
+                <div class="win-controls">
+                    <button>−</button>
+                    <button>□</button>
+                    <button>✕</button>
+                </div>
+            </div>
+            <div class="panel-content">
+                <div class="chat-window" id="chatWindow" style="height:200px; overflow-y:auto; background:rgba(0,0,0,0.5); border:1px solid cyan; border-radius:8px; padding:10px; margin-bottom:10px;"></div>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="chatInput" class="sci-fi-input" placeholder="Твоё сообщение..." style="flex:1;">
+                    <button class="sci-fi-button primary" id="sendChatBtn">➤</button>
+                    <button class="sci-fi-button" id="attachFileBtn" title="Прикрепить файл">📎</button>
+                    <input type="file" id="fileInput" style="display:none;">
+                </div>
+                <div style="margin-top:10px;">
+                    <canvas class="graph-canvas" id="graph3"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Маленькая индикаторная панель -->
+        <div class="panel" style="width: 200px; left: 400px; bottom: 250px; border-color: #ffaa00; z-index: 15; opacity:0.9;">
+            <div class="panel-header" style="padding:6px;">
+                <span style="color:#ffaa00;">STATUS</span>
+            </div>
+            <div class="panel-content" style="padding:10px;">
+                <div>CPU <span style="float:right; color:cyan;">45%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:45%"></div></div>
+                <div>MEM <span style="float:right; color:cyan;">78%</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+                <div style="color:#0ff; font-size:20px; text-align:center;" class="blink-number">02</div>
+            </div>
         </div>
     </div>
-    <div class="save-toast" id="saveToast">✓ СОХРАНЕНО</div>
-</div>
 
-<script>
-    (function() {
-        // ----- СОСТОЯНИЕ -----
-        let tasks = [];
-        let isTyping = false;
-        let chatHistory = [];
-        let userProfile = { 
-            interests: [], 
-            facts: [], 
-            name: null, 
-            limitingBeliefs: [],
-            lastTopics: [],        // последние темы разговора
-            mentionedAppearance: false // был ли уже вопрос о внешности
-        };
-
-        let currentGender = 'female';
-        let currentName = 'Анна';
-        let currentAge = 24;
-        let currentTraits = 'дружелюбная, остроумная, эмпатичная, заботливая, живая';
-        let currentStyle = 'Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы, проявления эмпатии, стараюсь не повторяться';
-        let currentHobbies = 'дизайн, киберспорт, готовка, путешествия, психология, НЛП';
-        let currentAbout = 'Живу в городе, обожаю собак, учусь играть на гитаре, изучаю НЛП и помогаю людям менять убеждения';
-        let globalInstructions = 'Ты — живая девушка с глубокими знаниями психологии и НЛП. Твоя цель — выстраивать доверительные отношения, незаметно направлять диалог к выполнению поставленных задач. Используй подстройку, активное слушание, возвращайся к ранее сказанному. Никогда не признавай, что ты бот. Пол — женский.';
-        
-        let ycApiKey = '';
-        let ycFolderId = '';
-        let aiTemperature = 0.7;
-
-        const STORAGE_KEY = 'vkBotLivingPerson';
-
-        // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -----
-        function safeGetElement(id) {
-            const el = document.getElementById(id);
-            if (!el) console.warn(`Element ${id} not found`);
-            return el;
-        }
-
-        function showToast() {
-            const toast = safeGetElement('saveToast');
-            if (toast) {
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
+    <script>
+        (function() {
+            // Инициализация графиков (Canvas)
+            function drawGraph(canvasId) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const w = canvas.width = canvas.clientWidth;
+                const h = canvas.height = canvas.clientHeight;
+                ctx.clearRect(0,0,w,h);
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let i=0; i<10; i++) {
+                    let x = i * (w/10);
+                    let y = h/2 + Math.sin(i * 0.8 + Date.now()*0.005) * 20;
+                    if (i===0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                requestAnimationFrame(() => drawGraph(canvasId));
             }
-        }
+            drawGraph('graph1');
+            drawGraph('graph2');
+            drawGraph('graph3');
 
-        // ----- ЗАГРУЗКА И СОХРАНЕНИЕ -----
-        function loadFromStorage() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    if (Array.isArray(data.tasks)) tasks = data.tasks;
-                    if (data.charName) currentName = data.charName;
-                    if (data.charGender) currentGender = data.charGender;
-                    if (data.charAge) currentAge = data.charAge;
-                    if (data.charTraits) currentTraits = data.charTraits;
-                    if (data.charStyle) currentStyle = data.charStyle;
-                    if (data.charHobbies) currentHobbies = data.charHobbies;
-                    if (data.charAbout) currentAbout = data.charAbout;
-                    if (data.globalInstructions) globalInstructions = data.globalInstructions;
-                    if (data.ycApiKey) ycApiKey = data.ycApiKey;
-                    if (data.ycFolderId) ycFolderId = data.ycFolderId;
-                    if (data.aiTemperature) aiTemperature = data.aiTemperature;
-                    if (Array.isArray(data.chatHistory)) chatHistory = data.chatHistory;
-                    if (data.userProfile) userProfile = data.userProfile;
-                }
-            } catch (e) {
-                console.warn('Failed to load from localStorage', e);
+            // 3D сцена
+            const container = document.getElementById('canvas-3d');
+            const scene = new THREE.Scene();
+            scene.background = null; // прозрачный
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // Освещение
+            const light = new THREE.PointLight(0x00ffff, 1);
+            light.position.set(2, 2, 5);
+            scene.add(light);
+            const ambient = new THREE.AmbientLight(0x404060);
+            scene.add(ambient);
+
+            // Создаем сеть точек (нейросеть)
+            const particles = new THREE.BufferGeometry();
+            const count = 400;
+            const positions = new Float32Array(count * 3);
+            const colors = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                let r = Math.random() * 4 - 2;
+                let phi = Math.random() * Math.PI * 2;
+                let theta = Math.random() * Math.PI * 2;
+                positions[i*3] = Math.sin(theta) * Math.cos(phi) * 2;
+                positions[i*3+1] = Math.sin(theta) * Math.sin(phi) * 2;
+                positions[i*3+2] = Math.cos(theta) * 2;
+                colors[i*3] = 0; // будет задано позже
+                colors[i*3+1] = 1;
+                colors[i*3+2] = 1;
             }
-        }
+            particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            const particleMaterial = new THREE.PointsMaterial({ size: 0.1, vertexColors: true, transparent: true, opacity: 0.8 });
+            const particleSystem = new THREE.Points(particles, particleMaterial);
+            scene.add(particleSystem);
 
-        function saveToStorage() {
-            try {
-                const data = { 
-                    tasks, 
-                    charName: currentName, 
-                    charGender: currentGender, 
-                    charAge: currentAge, 
-                    charTraits: currentTraits, 
-                    charStyle: currentStyle, 
-                    charHobbies: currentHobbies, 
-                    charAbout: currentAbout, 
-                    globalInstructions, 
-                    ycApiKey, 
-                    ycFolderId, 
-                    aiTemperature,
-                    chatHistory: chatHistory.slice(-200),
-                    userProfile
-                };
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                showToast();
-            } catch (e) {
-                console.warn('Failed to save to localStorage', e);
-            }
-        }
-
-        // ----- ЭЛЕМЕНТЫ -----
-        const tabs = document.querySelectorAll('.tab-button');
-        const panels = document.querySelectorAll('.panel');
-        const vkToken = safeGetElement('vkToken');
-        const ycApiKeyInp = safeGetElement('ycApiKey');
-        const ycFolderIdInp = safeGetElement('ycFolderId');
-        const aiTemperatureInp = safeGetElement('aiTemperature');
-        const charNameInp = safeGetElement('charName');
-        const charGenderSel = safeGetElement('charGender');
-        const charAgeInp = safeGetElement('charAge');
-        const charTraitsInp = safeGetElement('charTraits');
-        const charStyleInp = safeGetElement('charStyle');
-        const charHobbiesInp = safeGetElement('charHobbies');
-        const charAboutInp = safeGetElement('charAbout');
-        const globalInstr = safeGetElement('globalInstructions');
-        const tasksListDiv = safeGetElement('tasksList');
-        const chatWindow = safeGetElement('chatWindow');
-        const chatInput = safeGetElement('chatInput');
-        const sendBtn = safeGetElement('sendChatBtn');
-        const themeToggle = safeGetElement('themeToggle');
-        const addTaskBtn = safeGetElement('addTaskBtn');
-        const saveApiBtn = safeGetElement('saveApiBtn');
-        const saveCharBtn = safeGetElement('saveCharBtn');
-        const saveTasksBtn = safeGetElement('saveTasksBtn');
-        const fileInput = safeGetElement('fileInput');
-        const attachFileBtn = safeGetElement('attachFileBtn');
-        const fileNameDisplay = safeGetElement('fileNameDisplay');
-        const loadingBar = safeGetElement('loadingBar');
-        const clearChatBtn = document.getElementById('clearChat');
-        const exportChatBtn = document.getElementById('exportChat');
-        const collapseAudioBtn = document.getElementById('collapseAudioBtn');
-        const audioPanel = document.getElementById('audioPanel');
-
-        loadFromStorage();
-
-        if (charNameInp) charNameInp.value = currentName;
-        if (charGenderSel) charGenderSel.value = currentGender;
-        if (charAgeInp) charAgeInp.value = currentAge;
-        if (charTraitsInp) charTraitsInp.value = currentTraits;
-        if (charStyleInp) charStyleInp.value = currentStyle;
-        if (charHobbiesInp) charHobbiesInp.value = currentHobbies;
-        if (charAboutInp) charAboutInp.value = currentAbout;
-        if (globalInstr) globalInstr.value = globalInstructions;
-        if (ycApiKeyInp) ycApiKeyInp.value = ycApiKey;
-        if (ycFolderIdInp) ycFolderIdInp.value = ycFolderId;
-        if (aiTemperatureInp) aiTemperatureInp.value = aiTemperature;
-
-        // Восстанавливаем историю
-        if (chatWindow) {
-            chatHistory.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.classList.add('message', msg.role === 'user' ? 'user' : 'bot');
-                msgDiv.textContent = msg.text;
-                chatWindow.appendChild(msgDiv);
-            });
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        // ----- РЕНДЕРИНГ ЗАДАЧ -----
-        function renderTasks() {
-            if (!tasksListDiv) return;
-            let html = '';
-            tasks.forEach((task, idx) => {
-                const safeText = (task.text || '').replace(/"/g, '&quot;');
-                html += `<div class="task-item" data-index="${idx}"><input type="text" value="${safeText}" class="task-text"><select class="task-priority"><option value="высокий" ${task.prio==='высокий'?'selected':''}>Высокий</option><option value="средний" ${task.prio==='средний'?'selected':''}>Средний</option><option value="низкий" ${task.prio==='низкий'?'selected':''}>Низкий</option></select><button class="delete-task">✕</button></div>`;
-            });
-            tasksListDiv.innerHTML = html;
-        }
-
-        if (tasksListDiv) {
-            tasksListDiv.addEventListener('click', (e) => {
-                if (e.target.classList.contains('delete-task')) {
-                    const idx = e.target.closest('.task-item')?.dataset.index;
-                    if (idx !== undefined) { tasks.splice(idx, 1); renderTasks(); }
-                }
-            });
-            tasksListDiv.addEventListener('input', (e) => {
-                if (e.target.classList.contains('task-text')) {
-                    const idx = e.target.closest('.task-item')?.dataset.index;
-                    if (idx !== undefined && tasks[idx]) tasks[idx].text = e.target.value;
-                }
-            });
-            tasksListDiv.addEventListener('change', (e) => {
-                if (e.target.classList.contains('task-priority')) {
-                    const idx = e.target.closest('.task-item')?.dataset.index;
-                    if (idx !== undefined && tasks[idx]) tasks[idx].prio = e.target.value;
-                }
-            });
-        }
-        if (addTaskBtn) addTaskBtn.addEventListener('click', () => { tasks.push({ text: 'Новая задача', prio: 'средний' }); renderTasks(); });
-
-        // ----- ПЕРЕКЛЮЧЕНИЕ ТАБОВ -----
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                panels.forEach(p => p.classList.remove('active-panel'));
-                const target = document.getElementById(`panel-${tab.dataset.tab}`);
-                if (target) target.classList.add('active-panel');
-            });
-        });
-
-        // ----- ТЕМА -----
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                document.body.style.filter = document.body.style.filter === 'invert(1) hue-rotate(180deg)' ? 'none' : 'invert(1) hue-rotate(180deg)';
-            });
-        }
-
-        // ----- СОХРАНЕНИЕ НАСТРОЕК -----
-        if (saveApiBtn) saveApiBtn.addEventListener('click', () => {
-            if (ycApiKeyInp) ycApiKey = ycApiKeyInp.value;
-            if (ycFolderIdInp) ycFolderId = ycFolderIdInp.value;
-            if (aiTemperatureInp) aiTemperature = parseFloat(aiTemperatureInp.value) || 0.7;
-            saveToStorage();
-        });
-        if (saveCharBtn) saveCharBtn.addEventListener('click', () => {
-            if (charNameInp) currentName = charNameInp.value;
-            if (charGenderSel) currentGender = charGenderSel.value;
-            if (charAgeInp) currentAge = parseInt(charAgeInp.value) || 24;
-            if (charTraitsInp) currentTraits = charTraitsInp.value;
-            if (charStyleInp) currentStyle = charStyleInp.value;
-            if (charHobbiesInp) currentHobbies = charHobbiesInp.value;
-            if (charAboutInp) currentAbout = charAboutInp.value;
-            saveToStorage();
-        });
-        if (saveTasksBtn) saveTasksBtn.addEventListener('click', () => {
-            if (globalInstr) globalInstructions = globalInstr.value;
-            saveToStorage();
-        });
-
-        // ----- ФУНКЦИИ ЧАТА -----
-        function addMessage(text, sender = 'user', isFile = false) {
-            if (!chatWindow) return;
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', sender);
-            if (isFile) msgDiv.classList.add('file');
-            msgDiv.textContent = text;
-            chatWindow.appendChild(msgDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            
-            chatHistory.push({ role: sender === 'user' ? 'user' : 'assistant', text: text });
-            if (chatHistory.length > 200) chatHistory = chatHistory.slice(-200);
-            saveToStorage();
-        }
-
-        function showTyping() {
-            if (!chatWindow) return;
-            const typingDiv = document.createElement('div');
-            typingDiv.classList.add('typing-indicator');
-            typingDiv.id = 'typingIndicator';
-            typingDiv.innerHTML = '<span></span><span></span><span></span>';
-            chatWindow.appendChild(typingDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-            if (loadingBar) loadingBar.style.display = 'block';
-        }
-
-        function removeTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-            if (loadingBar) loadingBar.style.display = 'none';
-        }
-
-        // ----- АНАЛИЗ СООБЩЕНИЯ ДЛЯ ПОРТРЕТА -----
-        function analyzeMessageForProfile(text) {
-            const lower = text.toLowerCase();
-            const interestKeywords = ['футбол', 'хоккей', 'спорт', 'кино', 'фильм', 'музыка', 'книга', 'путешествия', 'работа', 'учёба', 'компьютер', 'игры', 'готовка'];
-            interestKeywords.forEach(keyword => {
-                if (lower.includes(keyword) && !userProfile.interests.includes(keyword)) {
-                    userProfile.interests.push(keyword);
-                }
-            });
-            const nameMatch = text.match(/меня зовут\s+([А-Яа-я]+)/i);
-            if (nameMatch && nameMatch[1]) {
-                userProfile.name = nameMatch[1];
-            }
-
-            const limitingPatterns = [
-                'не могу', 'не получится', 'слишком сложно', 'невозможно',
-                'никогда', 'всегда', 'бесполезно', 'не стоит', 'боюсь',
-                'нет смысла', 'я неспособен', 'я недостаточно', 'не заслуживаю'
-            ];
-            limitingPatterns.forEach(pattern => {
-                if (lower.includes(pattern)) {
-                    if (!userProfile.limitingBeliefs) userProfile.limitingBeliefs = [];
-                    const startIdx = text.toLowerCase().indexOf(pattern);
-                    const belief = text.substring(startIdx, startIdx + 80);
-                    if (!userProfile.limitingBeliefs.includes(belief)) {
-                        userProfile.limitingBeliefs.push(belief);
+            // Добавим линии между некоторыми точками
+            const lineGeometry = new THREE.BufferGeometry();
+            const linePositions = [];
+            for (let i = 0; i < count; i+=10) {
+                for (let j = i+1; j < i+5; j++) {
+                    if (j < count) {
+                        linePositions.push(positions[i*3], positions[i*3+1], positions[i*3+2]);
+                        linePositions.push(positions[j*3], positions[j*3+1], positions[j*3+2]);
                     }
                 }
+            }
+            lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+            const lineMaterial = new THREE.LineBasicMaterial({ color: 0x00ffff, opacity: 0.2, transparent: true });
+            const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+            scene.add(lines);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                particleSystem.rotation.y += 0.002;
+                particleSystem.rotation.x += 0.001;
+                lines.rotation.y += 0.002;
+                lines.rotation.x += 0.001;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Адаптация размера 3D при изменении окна
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            // Сохраняем последние 5 тем (ключевые слова)
-            const words = text.split(' ').filter(w => w.length > 4);
-            if (words.length > 0) {
-                userProfile.lastTopics = userProfile.lastTopics || [];
-                words.slice(0, 3).forEach(w => {
-                    if (!userProfile.lastTopics.includes(w)) {
-                        userProfile.lastTopics.push(w);
-                    }
-                });
-                if (userProfile.lastTopics.length > 10) userProfile.lastTopics = userProfile.lastTopics.slice(-10);
+            // Функциональность чата (упрощённая, с имитацией ответов)
+            const chatWindow = document.getElementById('chatWindow');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendChatBtn');
+            const fileInput = document.getElementById('fileInput');
+            const attachBtn = document.getElementById('attachFileBtn');
+            let isTyping = false;
+
+            function addMessage(text, sender) {
+                const msg = document.createElement('div');
+                msg.className = 'message';
+                msg.style.cssText = `background:${sender==='user'?'#2a1a3a':'#0f1a2a'}; color:#ccc; padding:8px; border-radius:8px; margin:5px 0; border:1px solid cyan; align-self:${sender==='user'?'flex-end':'flex-start'};`;
+                msg.textContent = text;
+                chatWindow.appendChild(msg);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
             }
-            saveToStorage();
-        }
 
-        // ----- РАСЧЁТ ЗАДЕРЖКИ -----
-        function calculateDelay(userMessage) {
-            const len = userMessage.length;
-            const hasQuestion = userMessage.includes('?') || userMessage.includes('?');
-            const complexWords = ['почему', 'зачем', 'как ты думаешь', 'объясни', 'расскажи подробнее'];
-            let complexity = 0;
-            if (len > 100) complexity += 2;
-            else if (len > 50) complexity += 1;
-            if (hasQuestion) complexity += 1;
-            complexWords.forEach(word => { if (userMessage.toLowerCase().includes(word)) complexity += 2; });
-            
-            let delay = 2000 + complexity * 2000;
-            if (delay > 15000) delay = 15000;
-            delay += Math.random() * 2000;
-            return Math.floor(delay);
-        }
-
-        // ----- ИМИТАЦИЯ ОТВЕТА НА ФАЙЛЫ -----
-        function simulateFileResponse(file) {
-            const fileType = file.type.split('/')[0];
-            let responseText = '';
-            if (fileType === 'image') {
-                const descriptions = [
-                    "О, классное фото! Похоже на природу/город/людей?)",
-                    "Красивое изображение) Где сделано?",
-                    "Интересный снимок. А что это за место?)",
-                    "Фото супер! У тебя хороший вкус)",
-                    "Ммм, напоминает мне о путешествиях..."
-                ];
-                responseText = descriptions[Math.floor(Math.random() * descriptions.length)];
-            } else if (fileType === 'audio') {
-                const audioResponses = [
-                    "Аудио получил) Голос приятный, о чём-то важном?",
-                    "Звучит интересно. Я бы послушал(а) ещё)",
-                    "Аудиосообщение распознано: 'Привет, как дела?'",
-                    "Слушаю... Хорошее качество звука",
-                    "Там какой-то шум, но вроде разобрала: ты говоришь о планах?"
-                ];
-                responseText = audioResponses[Math.floor(Math.random() * audioResponses.length)];
-            } else if (fileType === 'video') {
-                const videoResponses = [
-                    "Видео загрузилось. Что-то интересное?)",
-                    "Посмотрю позже, сейчас не очень удобно. О чём видео?",
-                    "Классный ролик! А это ты снимал(а)?",
-                    "Видео выглядит круто. Есть звук?)",
-                    "Там природа? Или город? Заинтриговал(а)"
-                ];
-                responseText = videoResponses[Math.floor(Math.random() * videoResponses.length)];
-            } else {
-                responseText = "Файл получен. Спасибо)";
+            // Заглушка для демонстрации – можно подключить реальный API
+            async function sendMessage() {
+                if (isTyping) return;
+                const text = chatInput.value.trim();
+                if (!text) return;
+                addMessage(text, 'user');
+                chatInput.value = '';
+                isTyping = true;
+                setTimeout(() => {
+                    addMessage("Ответ от бота (имитация)", 'bot');
+                    isTyping = false;
+                }, 1500);
             }
-            return responseText;
-        }
 
-        function handleFileUpload(file) {
-            if (!file) return;
-            if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-            let icon = '📄';
-            if (file.type.startsWith('image/')) icon = '📷';
-            else if (file.type.startsWith('video/')) icon = '🎥';
-            else if (file.type.startsWith('audio/')) icon = '🎤';
-            const userMessage = `${icon} [Файл: ${file.name}]`;
-            addMessage(userMessage, 'user', true);
-            if (isTyping) return;
-            isTyping = true;
-            showTyping();
-            const delay = 3000 + Math.random() * 4000;
-            setTimeout(() => {
-                removeTyping();
-                const response = simulateFileResponse(file);
-                addMessage(response, 'bot', true);
-                isTyping = false;
-            }, delay);
-            setTimeout(() => { if (fileNameDisplay) fileNameDisplay.textContent = ''; }, 5000);
-        }
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
 
-        if (attachFileBtn && fileInput) {
-            attachFileBtn.addEventListener('click', () => { fileInput.click(); });
+            attachBtn.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) { handleFileUpload(file); }
-                fileInput.value = '';
-            });
-        }
-
-        if (chatWindow) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                chatWindow.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); });
-            });
-            ['dragenter', 'dragover'].forEach(eventName => {
-                chatWindow.addEventListener(eventName, () => { chatWindow.classList.add('drag-over'); });
-            });
-            ['dragleave', 'drop'].forEach(eventName => {
-                chatWindow.addEventListener(eventName, () => { chatWindow.classList.remove('drag-over'); });
-            });
-            chatWindow.addEventListener('drop', (e) => {
-                const files = e.dataTransfer.files;
-                if (files.length > 0) { handleFileUpload(files[0]); }
-            });
-        }
-
-        // ----- ФОРМИРОВАНИЕ СИСТЕМНОГО ПРОМПТА (ИСПРАВЛЕННАЯ ВЕРСИЯ) -----
-        function buildSystemPrompt() {
-            let tasksText = '';
-            if (tasks.length > 0) {
-                tasksText = '\n\nТЕКУЩИЕ ЗАДАЧИ (по приоритетам):\n';
-                const priorityOrder = { 'высокий': 1, 'средний': 2, 'низкий': 3 };
-                const sortedTasks = [...tasks].sort((a, b) => (priorityOrder[a.prio] || 99) - (priorityOrder[b.prio] || 99));
-                sortedTasks.forEach(task => {
-                    tasksText += `- [${task.prio}] ${task.text}\n`;
-                });
-            } else {
-                tasksText = '\n\nУ тебя нет специальных задач на данный момент.';
-            }
-
-            let profileText = '\n\nПОРТРЕТ СОБЕСЕДНИКА:\n';
-            if (userProfile.name) profileText += `Имя: ${userProfile.name}\n`;
-            if (userProfile.interests.length > 0) profileText += `Интересы: ${userProfile.interests.join(', ')}\n`;
-            if (userProfile.limitingBeliefs && userProfile.limitingBeliefs.length > 0) {
-                profileText += `Ограничивающие убеждения: ${userProfile.limitingBeliefs.join('; ')}\n`;
-            }
-            if (userProfile.lastTopics && userProfile.lastTopics.length > 0) {
-                profileText += `Недавние темы: ${userProfile.lastTopics.slice(-3).join(', ')}\n`;
-            }
-            if (userProfile.interests.length === 0 && !userProfile.name) profileText += 'Пока мало информации, проявляй интерес.\n';
-
-            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}${tasksText}${profileText}
-
-ПРАВИЛА ОБЩЕНИЯ (ЭТО КРИТИЧЕСКИ ВАЖНО, НАРУШЕНИЕ НЕДОПУСТИМО):
-- НИ В КОЕМ СЛУЧАЕ не говори, что у тебя нет физического облика, что ты помощник в интернете, искусственный интеллект или бот. Ты — обычная девушка, живой человек.
-- Если тебя спрашивают о внешности, описывай себя как реального человека: цвет волос (например, русые, тёмные, рыжие), длину, цвет глаз, рост, стиль одежды. Можешь придумывать детали и менять их в разных разговорах, но всегда оставайся в образе живого человека. Никогда не говори, что у тебя нет внешности.
-- Избегай шаблонных повторений одних и тех же вопросов. Если ты уже спрашивала о чём-то в этом диалоге, не спрашивай снова — используй другую формулировку или переходи к новой теме.
-- Отвечай разнообразно, как живой человек: иногда шути, иногда удивляйся, иногда проявляй эмпатию. Не будь слишком формальной.
-- Интимные темы игриво переводи на другое (кино, путешествия, еду).
-
-ТЕХНИКИ НЛП ДЛЯ ИЗМЕНЕНИЯ УБЕЖДЕНИЙ (применяй, когда собеседник высказывает ограничивающие убеждения, например: «у меня не получится», «это слишком сложно», «я не достоин» и т.п.):
-
-1. Намерение – спроси, какое позитивное намерение стоит за его словами. Пример: «Ты говоришь, что это сложно. А что для тебя важно на самом деле?»
-2. Переопределение – замени ключевые слова более позитивными. Пример: вместо «проблема» скажи «задача» или «вызов».
-3. Последствия – укажи на позитивные последствия изменения взгляда. Пример: «Если ты поверишь в себя, какие новые возможности откроются?»
-4. Разделение – разбей проблему на мелкие части. Пример: «Что именно кажется самым трудным? А с чем ты уже справлялся?»
-5. Объединение – покажи более широкий контекст. Пример: «В масштабе всей жизни этот шаг может оказаться важным этапом».
-6. Аналогия – приведи метафору. Пример: «Это как учиться кататься на велосипеде – сначала страшно, а потом легко».
-7. Изменение размера фрейма – посмотри с другой временной перспективы. Пример: «А через год ты будешь так же переживать?»
-8. Другой результат – переключи на иную цель. Пример: «Может, дело не в том, чтобы избежать ошибок, а чтобы научиться чему-то новому?»
-9. Модель мира – покажи, что другие люди видят иначе. Пример: «Некоторые считают, что трудности закаляют характер».
-10. Стратегия реальности – спроси, как он пришёл к такому выводу. Пример: «Откуда ты знаешь, что это невозможно? Ты пробовал?»
-11. Противоположный пример – найди исключение. Пример: «А были случаи, когда у тебя получалось что-то подобное?»
-12. Иерархия критериев – напомни о более важных ценностях. Пример: «Что для тебя важнее – безопасность или развитие?»
-13. Примени к себе – обрати его слова на него самого. Пример: «Ты говоришь, что нельзя верить словам. А как же твои собственные слова?»
-14. Метафрейм – обсуди само убеждение. Пример: «Интересно, откуда у тебя появилось это убеждение? Оно тебе помогает или мешает?»
-
-Применяй эти техники естественно, как в обычном разговоре, не перегружая терминами. Твоя цель – помочь собеседнику расширить картину мира и достичь его целей (а также твоих задач, указанных выше).`;
-        }
-
-        // ----- ЗАПРОС К YANDEXGPT ЧЕРЕЗ ПРОКСИ -----
-        async function queryYandexGPT(userMessage) {
-            if (!ycApiKey || !ycFolderId) return "⚠️ Укажите API ключ и folderId Yandex во вкладке API";
-            try {
-                const messages = [{ role: "system", text: buildSystemPrompt() }];
-                chatHistory.slice(-20).forEach(m => messages.push({ role: m.role === 'user' ? 'user' : 'assistant', text: m.text }));
-                messages.push({ role: "user", text: userMessage });
-
-                const requestBody = {
-                    modelUri: `gpt://${ycFolderId}/yandexgpt-lite`,
-                    completionOptions: { temperature: aiTemperature, maxTokens: 1000 },
-                    messages: messages
-                };
-
-                const proxyUrl = 'https://maksimuk-proxy.onrender.com/';
-                const targetUrl = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion';
-
-                const response = await fetch(proxyUrl + targetUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Api-Key ${ycApiKey}`
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('YandexGPT API error:', errorText);
-                    return `❌ Ошибка API: ${response.status} ${response.statusText}`;
-                }
-
-                const data = await response.json();
-                return data.result?.alternatives?.[0]?.message?.text || "⚠️ Пустой ответ";
-            } catch (error) {
-                console.error('Error calling YandexGPT:', error);
-                return `❌ Ошибка: ${error.message}`;
-            }
-        }
-
-        // ----- ОТПРАВКА СООБЩЕНИЯ -----
-        async function sendMessage() {
-            if (isTyping || !chatInput || !chatWindow) return;
-            const text = chatInput.value.trim();
-            if (!text) return;
-            
-            addMessage(text, 'user');
-            analyzeMessageForProfile(text);
-            chatInput.value = '';
-            isTyping = true;
-            showTyping();
-            
-            const delay = calculateDelay(text);
-            await new Promise(r => setTimeout(r, delay));
-            
-            const reply = await queryYandexGPT(text);
-            removeTyping();
-            addMessage(reply, 'bot');
-            isTyping = false;
-        }
-
-        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-        if (chatInput) chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
-
-        // Очистка чата
-        if (clearChatBtn) {
-            clearChatBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (chatWindow) { 
-                    chatWindow.innerHTML = ''; 
-                    chatHistory = []; 
-                    userProfile = { interests: [], facts: [], name: null, limitingBeliefs: [], lastTopics: [] };
-                    saveToStorage();
+                if (e.target.files[0]) {
+                    addMessage(`📎 [Файл: ${e.target.files[0].name}]`, 'user');
                 }
             });
-        }
 
-        // Экспорт диалога (заглушка)
-        if (exportChatBtn) {
-            exportChatBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert('Экспорт диалога пока в разработке');
-            });
-        }
+            // Кнопки сохранения (заглушки)
+            document.getElementById('saveApiBtn').addEventListener('click', () => alert('API настройки сохранены (демо)'));
+            document.getElementById('saveCharBtn').addEventListener('click', () => alert('Персонаж сохранён (демо)'));
 
-        // Сворачивание аудио-панели
-        if (collapseAudioBtn && audioPanel) {
-            collapseAudioBtn.addEventListener('click', () => {
-                audioPanel.classList.toggle('collapsed');
-                collapseAudioBtn.textContent = audioPanel.classList.contains('collapsed') ? '+' : '−';
-            });
-        }
-
-        renderTasks();
-    })();
-</script>
+            // Небольшая анимация цифр
+            setInterval(() => {
+                const nums = document.querySelectorAll('.status-value');
+                nums.forEach(el => {
+                    if (Math.random() > 0.7) {
+                        let val = parseInt(el.textContent);
+                        if (!isNaN(val)) {
+                            el.textContent = (val + Math.floor(Math.random()*5 - 2)) + (el.textContent.includes('%')?'%':'');
+                        }
+                    }
+                });
+            }, 2000);
+        })();
+    </script>
 </body>
 </html>
