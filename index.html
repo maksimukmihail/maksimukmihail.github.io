@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <style>
-        /* ===== СТИЛИ (полностью сохранены, добавлены стили для загрузки файлов) ===== */
+        /* ===== СТИЛИ (полностью сохранены) ===== */
         * {
             margin: 0;
             padding: 0;
@@ -60,6 +60,959 @@
             opacity: 0.5;
         }
         .audio-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            box-shadow: inset 0 0 20px #00ffff33, 0 0 30px #00ffff66;
+            position: relative;
+        }
+        .audio-panel::after {
+            content: "ПАНЕЛЬ УПРАВЛЕНИЯ TRANCEIVER XT200";
+            position: absolute;
+            top: -12px; left: 20px;
+            background: #0b0e1a;
+            padding: 0 10px;
+            color: #9d00ff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        .audio-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 140px;
+            border-right: 1px solid #00ffff55;
+            padding-right: 15px;
+        }
+        .audio-section:last-child {
+            border-right: none;
+        }
+        .section-title {
+            color: #9d00ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .level-bar {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .bar-container {
+            flex: 1;
+            height: 8px;
+            background: #1a1f2e;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            width: 75%;
+            background: linear-gradient(90deg, #00ffff, #9d00ff);
+            border-radius: 10px;
+        }
+        .level-value {
+            color: #00ffff;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+        }
+        .circle-meter {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: conic-gradient(#00ffff 0deg 220deg, #1a1f2e 220deg 360deg);
+            border: 2px solid #9d00ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px 0;
+            position: relative;
+        }
+        .circle-meter::after {
+            content: "48%";
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            background: #0b0e1a;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #00ffff;
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            color: #ccc;
+            font-size: 12px;
+        }
+        input[type=range] {
+            width: 100%;
+            height: 4px;
+            background: #1a1f2e;
+            border-radius: 10px;
+            -webkit-appearance: none;
+            border: 1px solid #00ffff;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #00ffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px cyan;
+        }
+        .switcher {
+            display: flex;
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 30px;
+            overflow: hidden;
+            width: fit-content;
+        }
+        .switcher button {
+            background: transparent;
+            border: none;
+            color: #00ffff;
+            padding: 6px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .switcher button.active {
+            background: #00ffff;
+            color: black;
+        }
+        .neo-button {
+            background: transparent;
+            border: 2px solid #9d00ff;
+            color: #9d00ff;
+            padding: 8px 16px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            font-size: 12px;
+            box-shadow: 0 0 15px #9d00ff;
+        }
+        .neo-button:hover {
+            background: #9d00ff;
+            color: black;
+        }
+        .texture-panel {
+            background: rgba(10, 15, 30, 0.7);
+            border: 2px solid #9d00ff;
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .texture-panel::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(45deg, rgba(157,0,255,0.05) 0px, rgba(157,0,255,0.05) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+        }
+        .video-feed {
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 16px;
+            padding: 10px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .video-header {
+            display: flex;
+            justify-content: space-between;
+            color: #9d00ff;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        .video-screen {
+            background: #1a1f2e;
+            height: 120px;
+            border-radius: 12px;
+            border: 1px solid #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #00ffff33;
+            font-size: 24px;
+            text-transform: uppercase;
+        }
+        .video-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .video-controls button {
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+        .video-controls button:hover {
+            background: #00ffff22;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #00ffff;
+            text-shadow: 0 0 10px cyan, 0 0 20px blue;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 2px solid #9d00ff;
+            color: #9d00ff;
+            padding: 8px 16px;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px #9d00ff;
+        }
+        .theme-toggle:hover {
+            background: #9d00ff;
+            color: black;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #00ffff55;
+            padding-bottom: 10px;
+        }
+        .tab-button {
+            background: transparent;
+            border: 2px solid #00ffff;
+            color: #00ffff;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 0 10px #00ffff33;
+        }
+        .tab-button.active {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 30px #00ffff;
+        }
+        .tab-button:hover {
+            background: #00ffff22;
+        }
+        .tab-content {
+            background: rgba(0, 10, 20, 0.7);
+            border: 2px solid #9d00ff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: inset 0 0 20px #9d00ff33, 0 0 30px #9d00ff66;
+            min-height: 450px;
+            position: relative;
+        }
+        .panel {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .panel.active-panel {
+            display: flex;
+        }
+        .panel h2 {
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 22px;
+            border-left: 5px solid #9d00ff;
+            padding-left: 15px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 5px cyan;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .input-group label {
+            color: #9d00ff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        .input-group input, .input-group textarea, .input-group select {
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #0ff;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+            box-shadow: 0 0 20px #00ffff, inset 0 0 10px #00ffff33;
+            border-color: #9d00ff;
+        }
+        .btn {
+            background: transparent;
+            border: 2px solid #9d00ff;
+            color: #9d00ff;
+            padding: 14px 28px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 16px;
+            box-shadow: 0 0 15px #9d00ff;
+        }
+        .btn:hover {
+            background: #9d00ff;
+            color: black;
+        }
+        .btn-primary {
+            border-color: #00ffff;
+            color: #00ffff;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        .btn-primary:hover {
+            background: #00ffff;
+            color: black;
+        }
+        .task-item {
+            background: #0a0f1e;
+            border: 1px solid #00ffff55;
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .chat-window {
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 20px;
+            height: 350px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 30px #00ffff22;
+            transition: border 0.2s;
+        }
+        .chat-window.drag-over {
+            border-color: #9d00ff;
+            box-shadow: inset 0 0 30px #9d00ff66;
+        }
+        .message {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            background: #1a1f2e;
+            color: #ccc;
+            border: 1px solid #00ffff55;
+            align-self: flex-start;
+            word-wrap: break-word;
+        }
+        .message.user {
+            background: #2a1a3a;
+            border-color: #9d00ff;
+            align-self: flex-end;
+        }
+        .message.file {
+            background: #1a2a3a;
+            border-color: #ffaa00;
+            font-style: italic;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 12px 18px;
+            background: #0f1a2a;
+            border-radius: 18px;
+            width: fit-content;
+            border: 1px solid #00ffff;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: blink 1.4s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .chat-input-area input {
+            flex: 1;
+            min-width: 200px;
+            background: #0a0f1e;
+            border: 2px solid #00ffff;
+            border-radius: 40px;
+            padding: 14px 20px;
+            color: white;
+        }
+        .file-upload-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        #fileNameDisplay {
+            color: #00ffff;
+            font-size: 14px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .save-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #00ffff;
+            color: black;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 700;
+            box-shadow: 0 0 30px cyan;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+        .save-toast.show {
+            opacity: 1;
+        }
+        .instruction-link {
+            color: #00ffff;
+            text-decoration: none;
+            border-bottom: 1px dashed #00ffff;
+        }
+        .instruction-link:hover {
+            color: #9d00ff;
+            border-bottom-color: #9d00ff;
+        }
+    </style>
+</head>
+<body>
+<div class="hud-container" id="app">
+    <div class="header">
+        <div class="title">⚡ VK БОТ · МУЛЬТИМЕДИА HUD</div>
+        <button class="theme-toggle" id="themeToggle">🌓 ИНВЕРСИЯ</button>
+    </div>
+
+    <!-- Аудио-панель -->
+    <div class="audio-panel">
+        <div class="audio-section">
+            <div class="section-title">АКУСТИЧЕСКИЕ ДАННЫЕ</div>
+            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:65%"></div></span><span class="level-value">65%</span></div>
+            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:82%"></div></span><span class="level-value">82%</span></div>
+            <div class="level-bar"><span class="bar-container"><div class="bar-fill" style="width:41%"></div></span><span class="level-value">41%</span></div>
+        </div>
+        <div class="audio-section">
+            <div class="section-title">НАСТРОЙКИ ЗВУКА</div>
+            <div class="slider-group"><div class="slider-label"><span>LF</span><span>-2.0</span></div><input type="range" min="-5" max="5" value="-2" step="0.5"></div>
+            <div class="slider-group"><div class="slider-label"><span>MF</span><span>+1.5</span></div><input type="range" min="-5" max="5" value="1.5" step="0.5"></div>
+            <div class="slider-group"><div class="slider-label"><span>HF</span><span>+3.0</span></div><input type="range" min="-5" max="5" value="3" step="0.5"></div>
+        </div>
+        <div class="audio-section">
+            <div class="section-title">ИНДИКАТОР УСТРОЙСТВА</div>
+            <div class="circle-meter"></div>
+            <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#00ffff;">АТАКА</span><span style="color:#9d00ff;">МОНИТОР</span></div>
+        </div>
+        <div class="audio-section">
+            <div class="section-title">УПРАВЛЕНИЕ</div>
+            <div class="switcher"><button class="active">ТИХО</button><button>БЫСТРО</button></div>
+            <div class="switcher" style="margin-top:5px;"><button class="active">АТАКА</button><button>МОНИТОР</button></div>
+            <button class="neo-button" style="margin-top:10px;">СБРОС ПЛЕЕРА</button>
+        </div>
+        <div class="audio-section">
+            <div class="section-title">БАЛАНС</div>
+            <div style="display: flex; gap:5px; align-items:center;"><span style="color:#00ffff;">-1.5</span><input type="range" min="-1.5" max="1.5" value="0" step="0.5" style="width:100px;"><span style="color:#00ffff;">+1.5</span></div>
+            <div style="display: flex; gap:10px; margin-top:5px;"><span style="color:#9d00ff;">ПРОФ. РЕЖИМ</span><span style="color:#00ffff;">ВКЛ</span></div>
+        </div>
+    </div>
+
+    <!-- Табы -->
+    <div class="tabs" id="tabsContainer">
+        <button class="tab-button active" data-tab="api">⚙️ API</button>
+        <button class="tab-button" data-tab="character">👤 ПЕРСОНАЖ</button>
+        <button class="tab-button" data-tab="tasks">🎯 ЦЕЛИ</button>
+        <button class="tab-button" data-tab="chat">💬 ЧАТ</button>
+    </div>
+
+    <div class="tab-content">
+        <!-- Панель API (содержит инструкции, без изменений) -->
+        <div class="panel active-panel" id="panel-api">
+            <h2>🔌 НАСТРОЙКИ VK API И YANDEXGPT</h2>
+            <div style="background: #0f1f2f; border-left: 5px solid #00ffff; padding: 15px; border-radius: 16px; margin-bottom: 15px;">
+                <h3 style="color:#00ffff; margin-bottom:10px;">🤖 НАСТРОЙКИ YANDEXGPT</h3>
+                <div class="input-group" style="margin-bottom: 10px;"><label>🔑 API ключ Yandex Cloud</label><input type="password" id="ycApiKey" placeholder="AQVNxxxxxxxxxxxxxxxxxxxxxxxxxx"></div>
+                <div class="input-group" style="margin-bottom: 10px;"><label>📁 ID каталога (folderId)</label><input type="text" id="ycFolderId" placeholder="b1gxxxxxxxxxxxxxxxxxxx"></div>
+                <div class="input-group" style="margin-bottom: 5px;"><label>🌡️ Температура (0.0 - 1.0)</label><input type="number" id="aiTemperature" min="0" max="1" step="0.1" value="0.7"></div>
+                <div style="background: #0a0f1e; padding: 15px; border-radius: 8px; margin-top: 15px; color: #ccc; font-size: 14px; line-height: 1.6;">
+                    <p style="color:#9d00ff; font-weight:700; margin-bottom:8px;">📘 ПОДРОБНАЯ ИНСТРУКЦИЯ: ПОЛУЧЕНИЕ API-КЛЮЧА И ID КАТАЛОГА YANDEX CLOUD</p>
+                    <ol style="padding-left:20px;"><li>Перейдите в <a class="instruction-link" href="https://console.cloud.yandex.ru" target="_blank">консоль Yandex Cloud</a> и авторизуйтесь.</li><li>Выберите или создайте каталог (folder). Его ID можно скопировать из URL (после <code>/folders/</code>) или из карточки каталога. <a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Как узнать ID каталога</a>.</li><li>Создайте сервисный аккаунт с ролью <code>ai.languageModels.user</code>: <ul><li>В меню слева выберите «Сервисные аккаунты» (<a class="instruction-link" href="https://console.cloud.yandex.ru/iam/service-accounts" target="_blank">прямая ссылка</a>).</li><li>Нажмите «Создать сервисный аккаунт», укажите имя (например, <code>vk-bot-sa</code>).</li><li>После создания перейдите в него, нажмите «Добавить роль», найдите <code>ai.languageModels.user</code> и добавьте.</li></ul></li><li>Создайте API-ключ для этого сервисного аккаунта: <ul><li>На странице сервисного аккаунта перейдите на вкладку «API-ключи» или сразу после создания будет предложено создать ключ.</li><li>Нажмите «Создать API-ключ», введите описание, скопируйте сгенерированный ключ (показывается один раз). <a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Документация</a>.</li></ul></li><li>Вставьте скопированный ключ в поле «🔑 API ключ Yandex Cloud» выше, а ID каталога — в поле «📁 ID каталога».</li></ol>
+                    <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
+                    <ul><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/api-key/create" target="_blank">Создание API-ключа</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id" target="_blank">Получение ID каталога</a></li><li><a class="instruction-link" href="https://cloud.yandex.ru/docs/iam/operations/sa/create" target="_blank">Создание сервисного аккаунта</a></li></ul>
+                </div>
+            </div>
+            <h3 style="color:#9d00ff; margin-top: 10px;">📱 НАСТРОЙКИ VK</h3>
+            <div class="input-group"><label>🔑 Токен доступа (VK API)</label><input type="password" id="vkToken" placeholder="vk1.a.xxxx..." value="токен_не_задан"></div>
+            <div class="input-group"><label>🆔 ID сообщества</label><input type="text" id="vkGroupId" placeholder="123456789" value="123456"></div>
+            <div class="input-group"><label>🔐 Подтверждающий токен</label><input type="password" id="vkConfirmToken" placeholder="a1b2c3d4e5f6g7h8i9j0" value="confirm_token"></div>
+            <div style="background: #0f1f2f; border-left: 5px solid #9d00ff; padding: 15px; border-radius: 16px; margin-top: 15px;">
+                <h3 style="color:#9d00ff; margin-bottom:10px;">📘 ПОДРОБНАЯ ИНСТРУКЦИЯ: НАСТРОЙКА CALLBACK API ВКОНТАКТЕ</h3>
+                <div style="color:#ccc; line-height:1.6; font-size:14px;">
+                    <ol style="padding-left:20px;"><li>Перейдите в управление сообществом ВК: <ul><li>Откройте своё сообщество → нажмите «Управление» (или перейдите по ссылке <code>https://vk.com/clubXXXX?act=edit</code>, заменив XXXX на ID сообщества).</li></ul></li><li>В левом меню выберите «Работа с API» → «Callback API». Прямая ссылка: <code>https://vk.com/clubXXXX?act=api</code> (замените XXXX на ID).</li><li>Нажмите «Добавить сервер» и заполните поля: <ul><li><b>Название сервера</b>: например, «Мой бот».</li><li><b>Адрес сервера</b>: <code>https://ваш-домен/api/callback</code> (если тестируете локально, используйте ngrok).</li><li><b>Версия API</b>: 5.131 (или новее).</li></ul></li><li>После добавления сервера скопируйте <b>Строку подтверждения</b> (это токен). Вставьте её в поле «🔐 Подтверждающий токен» выше.</li><li>Нажмите «Подтвердить» — ВК отправит запрос на ваш сервер. Если сервер настроен правильно, он ответит этой строкой, и статус станет «Подтверждён».</li><li>В разделе «Типы событий» отметьте необходимые: <ul><li>Обязательно: <b>«Сообщение входящее»</b> и <b>«Подтверждение сервера»</b>.</li><li>Остальные — по желанию.</li></ul></li><li>Сохраните настройки.</li></ol>
+                    <p style="margin-top:10px;">🔗 Полезные ссылки:</p>
+                    <ul><li><a class="instruction-link" href="https://vk.com/dev/callback_api" target="_blank">Документация VK Callback API</a></li><li><a class="instruction-link" href="https://vkhost.github.io/" target="_blank">Генератор токена доступа сообщества (vkhost)</a></li></ul>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="saveApiBtn" style="margin-top:15px;">💾 СОХРАНИТЬ</button>
+        </div>
+
+        <!-- Панель персонажа (без изменений) -->
+        <div class="panel" id="panel-character">
+            <h2>🧬 НАСТРОЙКИ ПЕРСОНАЖА</h2>
+            <div class="input-group"><label>👤 Имя</label><input type="text" id="charName" value="Анна"></div>
+            <div class="input-group"><label>⚥ Пол</label><select id="charGender"><option value="female" selected>Женский</option><option value="male">Мужской</option><option value="other">Другой</option></select></div>
+            <div class="input-group"><label>🎂 Возраст</label><input type="number" id="charAge" value="24"></div>
+            <div class="input-group"><label>🧠 Характер</label><textarea id="charTraits" rows="2">дружелюбная, остроумная, загадочная, заботливая</textarea></div>
+            <div class="input-group"><label>💬 Стиль общения</label><textarea id="charStyle" rows="2">Использую скобочки ), легкий флирт, иногда сленг</textarea></div>
+            <div class="input-group"><label>🎯 Увлечения</label><textarea id="charHobbies" rows="2">дизайн, киберспорт, готовка, путешествия</textarea></div>
+            <div class="input-group"><label>📖 О себе</label><textarea id="charAbout" rows="2">Живу в городе, люблю собак, учусь играть на гитаре</textarea></div>
+            <button class="btn btn-primary" id="saveCharBtn">💾 СОХРАНИТЬ</button>
+        </div>
+
+        <!-- Панель целей (без изменений) -->
+        <div class="panel" id="panel-tasks">
+            <h2>🎯 ЦЕЛИ И ЗАДАЧИ</h2>
+            <div id="tasksList"></div>
+            <button class="btn" id="addTaskBtn">+ ДОБАВИТЬ ЗАДАЧУ</button>
+            <div style="margin-top: 25px;"><h3 style="color:#9d00ff;">📋 ОБЩИЕ ИНСТРУКЦИИ</h3><textarea id="globalInstructions" rows="6" style="width:100%; background:#0a0f1e; border:2px solid #00ffff; border-radius:16px; padding:12px; color:white;">Ты — живая девушка. Общаешься с мужчиной по модели: поддерживаешь его амбиции, не давишь, создаёшь эмоциональную связь. Используй скобки ), иногда сленг. Интимные темы переводи на другое. Никогда не признавай, что ты бот. Пол — женский.</textarea></div>
+            <button class="btn btn-primary" id="saveTasksBtn">💾 СОХРАНИТЬ</button>
+        </div>
+
+        <!-- Панель чата с поддержкой файлов -->
+        <div class="panel" id="panel-chat">
+            <h2>💬 ТЕРМИНАЛ СВЯЗИ (с поддержкой файлов)</h2>
+            <div class="video-feed"><div class="video-header"><span>ВИДЕО ПОТОК</span><span>ОНЛАЙН</span></div><div class="video-screen">🎥 ПРЕДПРОСМОТР</div><div class="video-controls"><button title="Предыдущий">⏮</button><button title="Воспроизвести/Пауза">⏯</button><button title="Следующий">⏭</button><button title="Без звука">🔇</button></div></div>
+            <div class="chat-window" id="chatWindow"></div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Твоё сообщение..." autocomplete="off">
+                <div class="file-upload-area"><input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;"><button class="btn btn-primary" id="attachFileBtn" title="Прикрепить файл (фото, видео, аудио)">📎</button><span id="fileNameDisplay"></span></div>
+                <button class="btn btn-primary" id="sendChatBtn">➤ ПЕРЕДАТЬ</button>
+            </div>
+            <div style="margin-top:10px; color:#9d00ff; font-size:12px;">⏱️ Задержка 3–20 сек + YandexGPT | 📎 Перетащите файл в окно чата</div>
+        </div>
+    </div>
+    <div class="save-toast" id="saveToast">✓ СОХРАНЕНО</div>
+</div>
+
+<script>
+    (function() {
+        // ----- СОСТОЯНИЕ -----
+        let tasks = [];
+        let isTyping = false;
+        let chatHistory = [];
+        
+        let currentGender = 'female';
+        let currentName = 'Анна';
+        let currentAge = 24;
+        let currentTraits = 'дружелюбная, остроумная, загадочная, заботливая';
+        let currentStyle = 'Использую скобочки ), легкий флирт, иногда сленг, не идеальная пунктуация, короткие фразы.';
+        let currentHobbies = 'Работаю дизайнером, увлекаюсь киберспортом, люблю готовить и путешествовать.';
+        let currentAbout = 'Живу в городе, обожаю собак, учусь играть на гитаре.';
+        let globalInstructions = 'Ты — живая девушка. Общаешься с мужчиной по модели: поддерживаешь его амбиции, интересуешься его делами, не давишь, создаёшь эмоциональную связь. Используй скобки ), иногда сленг. Интимные темы переводи на другое (кино, путешествия). Никогда не признавай, что ты бот. Если спрашивают про пол — отвечай, что ты девушка.';
+        
+        let ycApiKey = '';
+        let ycFolderId = '';
+        let aiTemperature = 0.7;
+
+        // ----- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ -----
+        function safeGetElement(id) {
+            const el = document.getElementById(id);
+            if (!el) console.warn(`Element ${id} not found`);
+            return el;
+        }
+
+        function showToast() {
+            const toast = safeGetElement('saveToast');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            }
+        }
+
+        // ----- ЗАГРУЗКА И СОХРАНЕНИЕ -----
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('vkBotAudioHUD');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (Array.isArray(data.tasks)) tasks = data.tasks;
+                    if (data.charName) currentName = data.charName;
+                    if (data.charGender) currentGender = data.charGender;
+                    if (data.charAge) currentAge = data.charAge;
+                    if (data.charTraits) currentTraits = data.charTraits;
+                    if (data.charStyle) currentStyle = data.charStyle;
+                    if (data.charHobbies) currentHobbies = data.charHobbies;
+                    if (data.charAbout) currentAbout = data.charAbout;
+                    if (data.globalInstructions) globalInstructions = data.globalInstructions;
+                    if (data.ycApiKey) ycApiKey = data.ycApiKey;
+                    if (data.ycFolderId) ycFolderId = data.ycFolderId;
+                    if (data.aiTemperature) aiTemperature = data.aiTemperature;
+                }
+            } catch (e) {}
+        }
+
+        function saveToStorage() {
+            try {
+                const data = { tasks, charName: currentName, charGender: currentGender, charAge: currentAge, charTraits: currentTraits, charStyle: currentStyle, charHobbies: currentHobbies, charAbout: currentAbout, globalInstructions, ycApiKey, ycFolderId, aiTemperature };
+                localStorage.setItem('vkBotAudioHUD', JSON.stringify(data));
+                showToast();
+            } catch (e) {}
+        }
+
+        // ----- ЭЛЕМЕНТЫ -----
+        const tabs = document.querySelectorAll('.tab-button');
+        const panels = document.querySelectorAll('.panel');
+        const vkToken = safeGetElement('vkToken');
+        const ycApiKeyInp = safeGetElement('ycApiKey');
+        const ycFolderIdInp = safeGetElement('ycFolderId');
+        const aiTemperatureInp = safeGetElement('aiTemperature');
+        const charNameInp = safeGetElement('charName');
+        const charGenderSel = safeGetElement('charGender');
+        const charAgeInp = safeGetElement('charAge');
+        const charTraitsInp = safeGetElement('charTraits');
+        const charStyleInp = safeGetElement('charStyle');
+        const charHobbiesInp = safeGetElement('charHobbies');
+        const charAboutInp = safeGetElement('charAbout');
+        const globalInstr = safeGetElement('globalInstructions');
+        const tasksListDiv = safeGetElement('tasksList');
+        const chatWindow = safeGetElement('chatWindow');
+        const chatInput = safeGetElement('chatInput');
+        const sendBtn = safeGetElement('sendChatBtn');
+        const themeToggle = safeGetElement('themeToggle');
+        const addTaskBtn = safeGetElement('addTaskBtn');
+        const saveApiBtn = safeGetElement('saveApiBtn');
+        const saveCharBtn = safeGetElement('saveCharBtn');
+        const saveTasksBtn = safeGetElement('saveTasksBtn');
+        const fileInput = safeGetElement('fileInput');
+        const attachFileBtn = safeGetElement('attachFileBtn');
+        const fileNameDisplay = safeGetElement('fileNameDisplay');
+
+        loadFromStorage();
+
+        if (charNameInp) charNameInp.value = currentName;
+        if (charGenderSel) charGenderSel.value = currentGender;
+        if (charAgeInp) charAgeInp.value = currentAge;
+        if (charTraitsInp) charTraitsInp.value = currentTraits;
+        if (charStyleInp) charStyleInp.value = currentStyle;
+        if (charHobbiesInp) charHobbiesInp.value = currentHobbies;
+        if (charAboutInp) charAboutInp.value = currentAbout;
+        if (globalInstr) globalInstr.value = globalInstructions;
+        if (ycApiKeyInp) ycApiKeyInp.value = ycApiKey;
+        if (ycFolderIdInp) ycFolderIdInp.value = ycFolderId;
+        if (aiTemperatureInp) aiTemperatureInp.value = aiTemperature;
+
+        // ----- РЕНДЕРИНГ ЗАДАЧ (сокращён для читаемости) -----
+        function renderTasks() {
+            if (!tasksListDiv) return;
+            let html = '';
+            tasks.forEach((task, idx) => {
+                const safeText = (task.text || '').replace(/"/g, '&quot;');
+                html += `<div class="task-item" data-index="${idx}"><input type="text" value="${safeText}" class="task-text"><select class="task-priority"><option value="высокий" ${task.prio==='высокий'?'selected':''}>Высокий</option><option value="средний" ${task.prio==='средний'?'selected':''}>Средний</option><option value="низкий" ${task.prio==='низкий'?'selected':''}>Низкий</option></select><button class="delete-task">✕</button></div>`;
+            });
+            tasksListDiv.innerHTML = html;
+        }
+
+        if (tasksListDiv) {
+            tasksListDiv.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-task')) {
+                    const idx = e.target.closest('.task-item')?.dataset.index;
+                    if (idx !== undefined) { tasks.splice(idx, 1); renderTasks(); }
+                }
+            });
+            tasksListDiv.addEventListener('input', (e) => {
+                if (e.target.classList.contains('task-text')) {
+                    const idx = e.target.closest('.task-item')?.dataset.index;
+                    if (idx !== undefined && tasks[idx]) tasks[idx].text = e.target.value;
+                }
+            });
+            tasksListDiv.addEventListener('change', (e) => {
+                if (e.target.classList.contains('task-priority')) {
+                    const idx = e.target.closest('.task-item')?.dataset.index;
+                    if (idx !== undefined && tasks[idx]) tasks[idx].prio = e.target.value;
+                }
+            });
+        }
+        if (addTaskBtn) addTaskBtn.addEventListener('click', () => { tasks.push({ text: 'Новая задача', prio: 'средний' }); renderTasks(); });
+
+        // ----- ПЕРЕКЛЮЧЕНИЕ ТАБОВ -----
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                panels.forEach(p => p.classList.remove('active-panel'));
+                const target = document.getElementById(`panel-${tab.dataset.tab}`);
+                if (target) target.classList.add('active-panel');
+            });
+        });
+
+        // ----- ТЕМА -----
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.style.filter = document.body.style.filter === 'invert(1) hue-rotate(180deg)' ? 'none' : 'invert(1) hue-rotate(180deg)';
+            });
+        }
+
+        // ----- СОХРАНЕНИЕ НАСТРОЕК -----
+        if (saveApiBtn) saveApiBtn.addEventListener('click', () => {
+            if (ycApiKeyInp) ycApiKey = ycApiKeyInp.value;
+            if (ycFolderIdInp) ycFolderId = ycFolderIdInp.value;
+            if (aiTemperatureInp) aiTemperature = parseFloat(aiTemperatureInp.value) || 0.7;
+            saveToStorage();
+        });
+        if (saveCharBtn) saveCharBtn.addEventListener('click', () => {
+            if (charNameInp) currentName = charNameInp.value;
+            if (charGenderSel) currentGender = charGenderSel.value;
+            if (charAgeInp) currentAge = parseInt(charAgeInp.value) || 24;
+            if (charTraitsInp) currentTraits = charTraitsInp.value;
+            if (charStyleInp) currentStyle = charStyleInp.value;
+            if (charHobbiesInp) currentHobbies = charHobbiesInp.value;
+            if (charAboutInp) currentAbout = charAboutInp.value;
+            saveToStorage();
+        });
+        if (saveTasksBtn) saveTasksBtn.addEventListener('click', () => {
+            if (globalInstr) globalInstructions = globalInstr.value;
+            saveToStorage();
+        });
+
+        // ----- ФУНКЦИИ ЧАТА -----
+        function addMessage(text, sender = 'user', isFile = false) {
+            if (!chatWindow) return;
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            if (isFile) msgDiv.classList.add('file');
+            msgDiv.textContent = text;
+            chatWindow.appendChild(msgDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            
+            chatHistory.push({ role: sender === 'user' ? 'user' : 'assistant', text: text });
+            if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+        }
+
+        function showTyping() {
+            if (!chatWindow) return;
+            const typingDiv = document.createElement('div');
+            typingDiv.classList.add('typing-indicator');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = '<span></span><span></span><span></span>';
+            chatWindow.appendChild(typingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function removeTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        // Имитация ответа на файл
+        function simulateFileResponse(file) {
+            const fileType = file.type.split('/')[0];
+            let responseText = '';
+            if (fileType === 'image') {
+                const descriptions = ["О, классное фото! Похоже на природу/город/людей?", "Красивое изображение) Где сделано?", "Интересный снимок. А что это за место?)", "Фото супер! У тебя хороший вкус)"];
+                responseText = descriptions[Math.floor(Math.random() * descriptions.length)];
+            } else if (fileType === 'audio') {
+                const audioResponses = ["Аудио получил) Голос приятный, о чём-то важном?", "Звучит интересно. Я бы послушал(а) ещё)", "Аудиосообщение распознано: 'Привет, как дела?'", "Слушаю... Хорошее качество звука"];
+                responseText = audioResponses[Math.floor(Math.random() * audioResponses.length)];
+            } else if (fileType === 'video') {
+                const videoResponses = ["Видео загрузилось. Что-то интересное?)", "Посмотрю позже, сейчас не очень удобно. О чём видео?", "Классный ролик! А это ты снимал(а)?", "Видео выглядит круто. Есть звук?)"];
+                responseText = videoResponses[Math.floor(Math.random() * videoResponses.length)];
+            } else {
+                responseText = "Файл получен. Спасибо)";
+            }
+            return responseText;
+        }
+
+        function handleFileUpload(file) {
+            if (!file) return;
+            if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+            let icon = '📄';
+            if (file.type.startsWith('image/')) icon = '📷';
+            else if (file.type.startsWith('video/')) icon = '🎥';
+            else if (file.type.startsWith('audio/')) icon = '🎤';
+            const userMessage = `${icon} [Файл: ${file.name}]`;
+            addMessage(userMessage, 'user', true);
+            if (isTyping) return;
+            isTyping = true;
+            showTyping();
+            setTimeout(() => {
+                removeTyping();
+                const response = simulateFileResponse(file);
+                addMessage(response, 'bot', true);
+                isTyping = false;
+            }, 2000 + Math.random() * 3000);
+            setTimeout(() => { if (fileNameDisplay) fileNameDisplay.textContent = ''; }, 5000);
+        }
+
+        if (attachFileBtn && fileInput) {
+            attachFileBtn.addEventListener('click', () => { fileInput.click(); });
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) { handleFileUpload(file); }
+                fileInput.value = '';
+            });
+        }
+
+        if (chatWindow) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                chatWindow.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); });
+            });
+            ['dragenter', 'dragover'].forEach(eventName => {
+                chatWindow.addEventListener(eventName, () => { chatWindow.classList.add('drag-over'); });
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                chatWindow.addEventListener(eventName, () => { chatWindow.classList.remove('drag-over'); });
+            });
+            chatWindow.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) { handleFileUpload(files[0]); }
+            });
+        }
+
+        // ----- ОСНОВНАЯ ФУНКЦИЯ ОТПРАВКИ ТЕКСТА (С ИСПОЛЬЗОВАНИЕМ ПРОКСИ) -----
+        function buildSystemPrompt() {
+            return `Ты — живая девушка по имени ${currentName}, ${currentAge} лет. Пол: ${currentGender === 'female' ? 'женский' : 'мужской'}. Характер: ${currentTraits}. Стиль: ${currentStyle}. Увлечения: ${currentHobbies}. О себе: ${currentAbout}. Общие инструкции: ${globalInstructions}. Правила: поддерживай амбиции, не дави, используй скобки ), интимные темы переводи. НИКОГДА не признавай, что ты бот. Если спрашивают про пол — отвечай соответственно.`;
+        }
+
+        async function queryYandexGPT(userMessage) {
+            if (!ycApiKey || !ycFolderId) return "⚠️ Укажите API ключ и folderId Yandex во вкладке API";
+            try {
+                const messages = [{ role: "system", text: buildSystemPrompt() }];
+                chatHistory.slice(-10).forEach(m => messages.push({ role: m.role, text: m.text }));
+                messages.push({ role: "user", text: userMessage });
+
+                const requestBody = {
+                    modelUri: `gpt://${ycFolderId}/yandexgpt-lite`,
+                    completionOptions: { temperature: aiTemperature, maxTokens: 1000 },
+                    messages: messages
+                };
+
+                // === ВАЖНО: используем ваш личный прокси на Render ===
+                const proxyUrl = 'https://maksimuk-proxy.onrender.com/';
+                const targetUrl = 'https://llm.api.cloud.yandex.net/foundationModels/v1/completion';
+
+                const response = await fetch(proxyUrl + targetUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Api-Key ${ycApiKey}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('YandexGPT API error:', errorText);
+                    return `❌ Ошибка API: ${response.status} ${response.statusText}`;
+                }
+
+                const data = await response.json();
+                return data.result?.alternatives?.[0]?.message?.text || "⚠️ Пустой ответ";
+            } catch (error) {
+                console.error('Error calling YandexGPT:', error);
+                return `❌ Ошибка: ${error.message}`;
+            }
+        }
+
+        async function sendMessage() {
+            if (isTyping || !chatInput || !chatWindow) return;
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, 'user');
+            chatInput.value = '';
+            isTyping = true;
+            showTyping();
+            
+            const thinkingDelay = Math.floor(Math.random() * (8000 - 3000 + 1) + 3000);
+            await new Promise(r => setTimeout(r, thinkingDelay));
+            
+            const reply = await queryYandexGPT(text);
+            removeTyping();
+            addMessage(reply, 'bot');
+            isTyping = false;
+        }
+
+        if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+        if (chatInput) chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
+
+        document.querySelector('#panel-chat h2')?.addEventListener('dblclick', () => {
+            if (chatWindow) { chatWindow.innerHTML = ''; chatHistory = []; }
+        });
+
+        renderTasks();
+    })();
+</script>
+</body>
+</html>        .audio-panel {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
